@@ -1,4 +1,4 @@
-package TonyGuessAlgorithm;
+package vn.rmit.cosc2658.tony_algo1;
 
 import vn.rmit.cosc2658.SecretKey;
 
