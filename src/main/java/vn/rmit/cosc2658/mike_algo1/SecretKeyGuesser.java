@@ -51,7 +51,6 @@ public class SecretKeyGuesser {
                     }
                     case -1 -> {
                         correct[i] = true;
-                        charCount[hash(originalChar)]--;
                         guess[i] = originalChar;
                     }
                     case 0 -> guess[i] = originalChar;
