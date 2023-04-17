@@ -14,6 +14,8 @@ class SecretKeyGuesserTest {
     private final SecretKey secretKey5 = new SecretKey("TTTTTTTTTTTTTTTT");
     private final SecretKey secretKey6 = new SecretKey("RMITRMITRMITRMIT");
     private final SecretKey secretKey7 = new SecretKey("RRMIRMTMMITIITMT");
+    private final SecretKey secretKey8 = new SecretKey("RRRRMMMMIIIITTTT");
+    private final SecretKey secretKey9 = new SecretKey("TTTTIIIIMMMMRRRR");
 
 
     @Test
@@ -56,5 +58,17 @@ class SecretKeyGuesserTest {
     void test7() {
         SecretKeyGuesser.start(secretKey7);
         System.out.printf("%s took %d guesses.\n", secretKey7.getKey(), secretKey7.getGuessCount());
+    }
+
+    @Test
+    void test8() {
+        SecretKeyGuesser.start(secretKey8);
+        System.out.printf("%s took %d guesses.\n", secretKey8.getKey(), secretKey8.getGuessCount());
+    }
+
+    @Test
+    void test9() {
+        SecretKeyGuesser.start(secretKey9);
+        System.out.printf("%s took %d guesses.\n", secretKey9.getKey(), secretKey9.getGuessCount());
     }
 }
