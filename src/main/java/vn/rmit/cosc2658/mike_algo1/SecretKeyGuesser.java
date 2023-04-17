@@ -29,8 +29,7 @@ public class SecretKeyGuesser {
         for (int i = 0; i < KEY_LENGTH; i++) correct[i] = false;
 
         // First guess is 16 R's
-        char[] guess = new char[KEY_LENGTH];
-        for (int i = 0; i < KEY_LENGTH; i++) guess[i] = 'R';
+        char[] guess = "R".repeat(KEY_LENGTH).toCharArray();
         matchCount = charCount[hash('R')];
 
         // Main algorithm
