@@ -8,7 +8,6 @@ public class SecretKey {
     private final String key;
     private int guessCount;
 
-
     public SecretKey(String key) {
         this.key = key;
         guessCount = 0;
