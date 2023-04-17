@@ -31,13 +31,38 @@ public class SecretKeyGuesser {
             }
         }
 
-        while (match != 16) {
-
+        do {
             moveCharType();
+
+            switch (charPos) {
+                // execute code if numOf_R is greater than 0 for charPos 'R'
+                case 'R' -> {
+                    if (numOf_R <= 0) {
+                        continue;
+                    }
+                }
+                case 'M' -> {
+                    if (numOf_M <= 0) {
+                        continue;
+                    }
+                }
+                case 'I' -> {
+                    if (numOf_I <= 0) {
+                        continue;
+                    }
+                }
+                case 'T' -> {
+                    if (numOf_T <= 0) {
+                        continue;
+                    }
+                }
+            }
+
             match = key.guess(str); // starting from "RTTT"
             str = next(str, maxMatch, match);
             maxMatch = Math.max(match, maxMatch);
-        }
+
+        } while (match != 16);
         System.out.println("I found the secret key. It is " + str);
     }
 
@@ -69,11 +94,21 @@ public class SecretKeyGuesser {
         // for example, "TTTT" -> 1
         // but "RTTT" -> 0 => The first 'T' is correct
 
-        if (currentMatch < maxMatch || currentMatch > maxMatch) {
+        if (currentMatch < maxMatch || currentMatch > maxMatch) { // the current key is the closet to real key
             positionInKey++;
+            reduceFrequency();
             return current;
         }
 
         return String.valueOf(curr);
+    }
+
+    private void reduceFrequency() {
+        switch (charPos) {
+            case 'R' -> numOf_R--;
+            case 'M' -> numOf_M--;
+            case 'I' -> numOf_I--;
+            case 'T' -> numOf_T--;
+        }
     }
 }
