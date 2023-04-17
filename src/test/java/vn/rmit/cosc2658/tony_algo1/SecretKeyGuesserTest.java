@@ -7,13 +7,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SecretKeyGuesserTest {
 
-    private final SecretKey secretKey1 = new SecretKey("RRRRRRRRRMITRMIT");
-    private final SecretKey secretKey2 = new SecretKey("RRRRRRRRRRRRRRRR");
-    private final SecretKey secretKey3 = new SecretKey("MMMMMMMMMMMMMMMM");
-    private final SecretKey secretKey4 = new SecretKey("IIIIIIIIIIIIIIII");
-    private final SecretKey secretKey5 = new SecretKey("TTTTTTTTTTTTTTTT");
-    private final SecretKey secretKey6 = new SecretKey("RMITRMITRMITRMIT");
-    private final SecretKey secretKey7 = new SecretKey("RRMIRMTMMITIITMT");
+    private final SecretKey secretKey1 = new SecretKey("RMIT");
+    private final SecretKey secretKey2 = new SecretKey("RRRR");
+    private final SecretKey secretKey3 = new SecretKey("MMMM");
+    private final SecretKey secretKey4 = new SecretKey("IIII");
+    private final SecretKey secretKey5 = new SecretKey("TTTT");
+    private final SecretKey secretKey6 = new SecretKey("ITRM");
+    private final SecretKey secretKey7 = new SecretKey("ITMT");
 
 
     @Test

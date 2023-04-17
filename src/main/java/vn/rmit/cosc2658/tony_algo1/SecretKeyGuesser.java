@@ -6,63 +6,75 @@ public class SecretKeyGuesser {
     private static final int CHAR_COUNT = 3;
     static int numOf_R, numOf_I, numOf_M, numOf_T;
     static int[] numOfChar = new int[4]; // R -> M -> I -> T
-    static String[] initGuess = new String[]{"RRRRRRRRRRRRRRRR", "MMMMMMMMMMMMMMMM", "IIIIIIIIIIIIIIII", "TTTTTTTTTTTTTTTT"};
+    static String[] initGuess = new String[]{"RRRR", "MMMMM", "IIII", "TTTT"};
     static char[] validChar = new char[]{'R', 'M', 'I', 'T'};
     static int charPos = 0;
     static int positionInKey = 0;
+    static String mostCorrectGuess;
     public static void start(SecretKey key) {
-        // brute force key guessing
-        int match = 0;
-        int maxMatch = 0;
+        int match = key.guess("RRRR");
+        int maxMatch = match;
+        int maxInitFrequency = 0;
+
         String str = "";
 
-        while(match != 16) {
-            str = initGuess[charPos]; // start by guessing "RRRR"
+//        while(match != 4) {
+//            str = initGuess[charPos]; // start by guessing "RRRR"
+//            match = key.guess(str);
+//            numOfChar[charPos] = match;
+//            maxInitFrequency = Math.max(maxInitFrequency, match);
+//
+//            setCharFrequency(match);
+//
+//            moveCharType();
+//            if (validChar[charPos] == 'R') {
+//                maxMatch = match; //  set max match at "TTTT"
+//                if (maxInitFrequency == numOf_R) {
+//                    str = "MRRR";
+//                }
+//                if (maxInitFrequency == numOf_M) {
+//                    str = "IMMM";
+//                }
+//                if (maxInitFrequency == numOf_I) {
+//                    str = "TIII";
+//                }
+//                if (maxInitFrequency == numOf_T) {
+//                    str = "RTTT";
+//                }
+//                mostCorrectGuess = str;
+//                break;
+//            }
+//        }
+
+        while (match != 4) {
+//            switch (charPos) {
+//                // execute code if numOf_R is greater than 0 for charPos 'R'
+//                case 'R' -> {
+//                    if (numOf_R <= 0) {
+//                        continue;
+//                    }
+//                }
+//                case 'M' -> {
+//                    if (numOf_M <= 0) {
+//                        continue;
+//                    }
+//                }
+//                case 'I' -> {
+//                    if (numOf_I <= 0) {
+//                        continue;
+//                    }
+//                }
+//                case 'T' -> {
+//                    if (numOf_T <= 0) {
+//                        continue;
+//                    }
+//                }
+//            }
+            moveCharType();
             match = key.guess(str);
-            numOfChar[charPos] = match;
-
-            setCharFrequency(match);
-
-            moveCharType();
-            if (validChar[charPos] == 'R') {
-                maxMatch = match; //  set max match at "TTTT"
-                str = "RTTT";
-                break;
-            }
-        }
-
-        do {
-            moveCharType();
-
-            switch (charPos) {
-                // execute code if numOf_R is greater than 0 for charPos 'R'
-                case 'R' -> {
-                    if (numOf_R <= 0) {
-                        continue;
-                    }
-                }
-                case 'M' -> {
-                    if (numOf_M <= 0) {
-                        continue;
-                    }
-                }
-                case 'I' -> {
-                    if (numOf_I <= 0) {
-                        continue;
-                    }
-                }
-                case 'T' -> {
-                    if (numOf_T <= 0) {
-                        continue;
-                    }
-                }
-            }
-
-            match = key.guess(str); // starting from "RTTT"
             str = next(str, maxMatch, match);
             maxMatch = Math.max(match, maxMatch);
-
-        } while (match != 16);
+        }
         System.out.println("I found the secret key. It is " + str);
     }
 
@@ -76,14 +88,14 @@ public class SecretKeyGuesser {
     }
 
     private static void moveCharType() {
-        if (charPos == CHAR_COUNT) {
+        if (charPos < CHAR_COUNT) {
             charPos++;
         } else {
             charPos = 0;
         }
     }
 
-    public static String next(String current, int maxMatch, int currentMatch) {
+    public static String next(String current, int prevMatch, int currentMatch) {
         char[] curr = current.toCharArray();
         curr[positionInKey] = validChar[charPos];
 
@@ -94,17 +106,24 @@ public class SecretKeyGuesser {
         // for example, "TTTT" -> 1
         // but "RTTT" -> 0 => The first 'T' is correct
 
-        if (currentMatch < maxMatch || currentMatch > maxMatch) { // the current key is the closet to real key
+        if (currentMatch > prevMatch) { // the current key is the closet to real key
             positionInKey++;
-            reduceFrequency();
+//            reduceFrequency(charPos);
+            mostCorrectGuess = current;
             return current;
+        }
+
+        if (currentMatch < prevMatch) { // the previous key is the closet to real key
+            positionInKey++;
+//            reduceFrequency(charPos-1);
+            return mostCorrectGuess;
         }
 
         return String.valueOf(curr);
     }
 
-    private static void reduceFrequency() {
-        switch (charPos) {
+    private static void reduceFrequency(int charPosition) {
+        switch (validChar[charPosition]) {
             case 'R' -> numOf_R--;
             case 'M' -> numOf_M--;
             case 'I' -> numOf_I--;
