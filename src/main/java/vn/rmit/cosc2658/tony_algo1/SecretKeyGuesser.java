@@ -8,8 +8,8 @@ public class SecretKeyGuesser {
     int[] numOfChar = new int[4]; // R -> M -> I -> T
     String[] initGuess = new String[]{"RRRR", "MMMM", "IIII", "TTTT"};
     char[] validChar = new char[]{'R', 'M', 'I', 'T'};
-    int position = 0;
     int charPos = 0;
+    int positionInKey = 0;
     public void start(SecretKey key) {
         // brute force key guessing
         int match = 0;
@@ -21,22 +21,27 @@ public class SecretKeyGuesser {
             match = key.guess(str);
             numOfChar[charPos] = match;
 
-            setFourFrequencies(charPos, match);
+            setCharFrequency(match);
 
-            moveCharPosition();
-            if (charPos == 3) {
-                maxMatch = match;
+            moveCharType();
+            if (validChar[charPos] == 'R') {
+                maxMatch = match; //  set max match at "TTTT"
+                str = "RTTT";
                 break;
             }
         }
 
         while (match != 16) {
 
+            moveCharType();
+            match = key.guess(str); // starting from "RTTT"
+            str = next(str, maxMatch, match);
+            maxMatch = Math.max(match, maxMatch);
         }
         System.out.println("I found the secret key. It is " + str);
     }
 
-    private void setFourFrequencies(int charPosition, int frequency) {
+    private void setCharFrequency(int frequency) {
         switch (validChar[charPos]) {
             case 'R' -> numOf_R = frequency;
             case 'M' -> numOf_M = frequency;
@@ -45,25 +50,30 @@ public class SecretKeyGuesser {
         }
     }
 
-    private void moveCharPosition() {
-        if (charPos == 3) {
+    private void moveCharType() {
+        if (charPos == CHAR_COUNT) {
             charPos++;
         } else {
             charPos = 0;
         }
     }
 
-    public String next(String current, int maxMatchCount, int currentMatch, int charAt) {
+    public String next(String current, int maxMatch, int currentMatch) {
         char[] curr = current.toCharArray();
+        curr[positionInKey] = validChar[charPos];
 
         //TODO: Algorithm goes here
 
         // if the max match decrease after changing the char
         // it means the previous character is correct
+        // for example, "TTTT" -> 1
+        // but "RTTT" -> 0 => The first 'T' is correct
 
-        if (currentMatch < maxMatchCount) {
+        if (currentMatch < maxMatch || currentMatch > maxMatch) {
+            positionInKey++;
             return current;
         }
+
         return String.valueOf(curr);
     }
 }
