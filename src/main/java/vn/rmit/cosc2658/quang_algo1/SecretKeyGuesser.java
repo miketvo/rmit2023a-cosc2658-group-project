@@ -1,7 +1,7 @@
 package vn.rmit.cosc2658.quang_algo1;
 
-
 import vn.rmit.cosc2658.SecretKey;
+
 
 public class SecretKeyGuesser {
     private static final String[] POSSIBLE_VALUES = {"R", "M", "I", "T"};
