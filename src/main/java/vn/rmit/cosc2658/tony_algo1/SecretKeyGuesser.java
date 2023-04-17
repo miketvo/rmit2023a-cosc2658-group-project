@@ -10,13 +10,12 @@ public class SecretKeyGuesser {
     static char[] validChar = new char[]{'R', 'M', 'I', 'T'};
     static int charPos = 0;
     static int positionInKey = 0;
-    static String mostCorrectGuess;
+    static String mostCorrectGuess = "RRRR";
     public static void start(SecretKey key) {
-        int match = key.guess("RRRR");
+        String str = "RRRR";
+        int match = key.guess(str);
         int maxMatch = match;
         int maxInitFrequency = 0;
-
-        String str = "";
 
 //        while(match != 4) {
 //            str = initGuess[charPos]; // start by guessing "RRRR"
@@ -47,6 +46,7 @@ public class SecretKeyGuesser {
 //        }
 
         while (match != 4) {
+
 //            switch (charPos) {
 //                // execute code if numOf_R is greater than 0 for charPos 'R'
 //                case 'R' -> {
@@ -70,6 +70,7 @@ public class SecretKeyGuesser {
 //                    }
 //                }
 //            }
+
             moveCharType();
             match = key.guess(str);
             str = next(str, maxMatch, match);
