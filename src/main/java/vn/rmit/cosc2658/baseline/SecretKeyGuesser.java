@@ -4,18 +4,17 @@ import vn.rmit.cosc2658.SecretKey;
 
 
 public class SecretKeyGuesser {
-    public void start() {
+    public static void start(SecretKey key) {
         // brute force key guessing
-        SecretKey key = new SecretKey(16);
         String str = "RRRRRRRRRRRRRRRR";
         while (key.guess(str) != 16) {
             str = next(str);
-            System.out.println("Guessing... " + str);
+            // System.out.println("Guessing... " + str);
         }
         System.out.println("I found the secret key. It is " + str);
     }
 
-    static int order(char c) {
+    private static int order(char c) {
         if (c == 'R') {
             return 0;
         } else if (c == 'M') {
@@ -26,7 +25,7 @@ public class SecretKeyGuesser {
         return 3;
     }
 
-    static char charOf(int order) {
+    private static char charOf(int order) {
         if (order == 0) {
             return 'R';
         } else if (order == 1) {
@@ -39,7 +38,7 @@ public class SecretKeyGuesser {
 
     // return the next value in 'RMIT' order, that is
     // R < M < I < T
-    public String next(String current) {
+    private static String next(String current) {
         char[] curr = current.toCharArray();
         for (int i = curr.length - 1; i >=0; i--) {
             if (order(curr[i]) < 3) {
