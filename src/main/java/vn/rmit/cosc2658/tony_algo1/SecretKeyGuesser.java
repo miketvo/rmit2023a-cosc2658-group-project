@@ -4,13 +4,13 @@ import vn.rmit.cosc2658.SecretKey;
 
 public class SecretKeyGuesser {
     private static final int CHAR_COUNT = 3;
-    int numOf_R, numOf_I, numOf_M, numOf_T;
-    int[] numOfChar = new int[4]; // R -> M -> I -> T
-    String[] initGuess = new String[]{"RRRR", "MMMM", "IIII", "TTTT"};
-    char[] validChar = new char[]{'R', 'M', 'I', 'T'};
-    int charPos = 0;
-    int positionInKey = 0;
-    public void start(SecretKey key) {
+    static int numOf_R, numOf_I, numOf_M, numOf_T;
+    static int[] numOfChar = new int[4]; // R -> M -> I -> T
+    static String[] initGuess = new String[]{"RRRRRRRRRRRRRRRR", "MMMMMMMMMMMMMMMM", "IIIIIIIIIIIIIIII", "TTTTTTTTTTTTTTTT"};
+    static char[] validChar = new char[]{'R', 'M', 'I', 'T'};
+    static int charPos = 0;
+    static int positionInKey = 0;
+    public static void start(SecretKey key) {
         // brute force key guessing
         int match = 0;
         int maxMatch = 0;
@@ -66,7 +66,7 @@ public class SecretKeyGuesser {
         System.out.println("I found the secret key. It is " + str);
     }
 
-    private void setCharFrequency(int frequency) {
+    private static void setCharFrequency(int frequency) {
         switch (validChar[charPos]) {
             case 'R' -> numOf_R = frequency;
             case 'M' -> numOf_M = frequency;
@@ -75,7 +75,7 @@ public class SecretKeyGuesser {
         }
     }
 
-    private void moveCharType() {
+    private static void moveCharType() {
         if (charPos == CHAR_COUNT) {
             charPos++;
         } else {
@@ -83,7 +83,7 @@ public class SecretKeyGuesser {
         }
     }
 
-    public String next(String current, int maxMatch, int currentMatch) {
+    public static String next(String current, int maxMatch, int currentMatch) {
         char[] curr = current.toCharArray();
         curr[positionInKey] = validChar[charPos];
 
@@ -103,7 +103,7 @@ public class SecretKeyGuesser {
         return String.valueOf(curr);
     }
 
-    private void reduceFrequency() {
+    private static void reduceFrequency() {
         switch (charPos) {
             case 'R' -> numOf_R--;
             case 'M' -> numOf_M--;
