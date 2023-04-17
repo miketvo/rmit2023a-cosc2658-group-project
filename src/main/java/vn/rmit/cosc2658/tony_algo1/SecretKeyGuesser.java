@@ -10,9 +10,9 @@ public class SecretKeyGuesser {
     static char[] validChar = new char[]{'R', 'M', 'I', 'T'};
     static int charPos = 0;
     static int positionInKey = 0;
-    static String mostCorrectGuess = "RRRR";
+    static String mostCorrectGuess = "RRRRRRRRRRRRRRRR";
     public static void start(SecretKey key) {
-        String str = "RRRR";
+        String str = "RRRRRRRRRRRRRRRR";
         int match = key.guess(str);
         int maxMatch = match;
         int maxInitFrequency = 0;
@@ -45,7 +45,7 @@ public class SecretKeyGuesser {
 //            }
 //        }
 
-        while (match != 4) {
+        while (match != 16) {
 
 //            switch (charPos) {
 //                // execute code if numOf_R is greater than 0 for charPos 'R'
@@ -97,8 +97,8 @@ public class SecretKeyGuesser {
     }
 
     public static String next(String current, int prevMatch, int currentMatch) {
-        char[] curr = current.toCharArray();
-        curr[positionInKey] = validChar[charPos];
+        char[] nextStr = current.toCharArray();
+        nextStr[positionInKey] = validChar[charPos];
 
         //TODO: Algorithm goes here
 
@@ -120,7 +120,7 @@ public class SecretKeyGuesser {
             return mostCorrectGuess;
         }
 
-        return String.valueOf(curr);
+        return String.valueOf(nextStr);
     }
 
     private static void reduceFrequency(int charPosition) {
