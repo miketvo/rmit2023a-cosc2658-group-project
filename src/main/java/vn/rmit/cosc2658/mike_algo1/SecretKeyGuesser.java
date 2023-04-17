@@ -10,12 +10,12 @@ public class SecretKeyGuesser {
     public static void start(SecretKey sk) {
         int[] charCount = new int[CHAR.length];  // Store the number of occurrences for each character R, M, I, and T
         int matchCount;
-        for (char c : CHAR) {               // Getting the number of occurrences for each character R, M, I, and T from the secret key
+        for (char c : CHAR) {                    // Getting the number of occurrences for each character R, M, I, and T from the secret key
             String guess = Character.toString(c).repeat(KEY_LENGTH);
             matchCount = sk.guess(guess);
             System.out.printf("Guessing \"%s\", %d match...\n", guess, matchCount);
 
-            if (matchCount == KEY_LENGTH) {       // Early termination for edge cases of keys that contains only 1 character 16 times
+            if (matchCount == KEY_LENGTH) {      // Early termination for edge cases of keys that contains only 1 character 16 times
                 System.out.printf("I found the secret key. It is \"%s\"\n", guess);
                 return;
             }
@@ -33,7 +33,8 @@ public class SecretKeyGuesser {
         for (int i = 0; i < KEY_LENGTH; i++) guess[i] = 'R';
         matchCount = charCount[hash('R')];
 
-        for (int charHash = hash('R') + 1; charHash < CHAR.length; charHash++) {
+        // Main algorithm
+        for (int charHash = hash('R') + 1; charHash < CHAR.length; charHash++) {  // Consider M, I, and T
             for (int i = 0; charCount[charHash] > 0 && i < KEY_LENGTH; i++) {
                 if (correct[i]) continue;
 
