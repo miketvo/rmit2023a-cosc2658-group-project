@@ -4,14 +4,14 @@ package vn.rmit.cosc2658.mike_algo1;
 import vn.rmit.cosc2658.SecretKey;
 
 public class SecretKeyGuesser {
-    private static final char[] CHARS = "RMIT".toCharArray();  // Possible letters
+    private static final char[] CHAR = "RMIT".toCharArray();  // Possible letters
     private static final int KEY_LENGTH = 16;
 
     public static void start(SecretKey sk) {
-        int[] charCount = new int[CHARS.length];  // Store the number of occurrences for each character R, M, I, and T
+        int[] charCount = new int[CHAR.length];  // Store the number of occurrences for each character R, M, I, and T
         int matchCount;
-        for (char letter : CHARS) {               // Getting the number of occurrences for each character R, M, I, and T from the secret key
-            String guess = Character.toString(letter).repeat(KEY_LENGTH);
+        for (char c : CHAR) {               // Getting the number of occurrences for each character R, M, I, and T from the secret key
+            String guess = Character.toString(c).repeat(KEY_LENGTH);
             matchCount = sk.guess(guess);
             System.out.printf("Guessing \"%s\", %d match...\n", guess, matchCount);
 
@@ -20,7 +20,7 @@ public class SecretKeyGuesser {
                 return;
             }
 
-            charCount[hash(letter)] = matchCount;
+            charCount[hash(c)] = matchCount;
         }
 
 
@@ -33,30 +33,29 @@ public class SecretKeyGuesser {
         for (int i = 0; i < KEY_LENGTH; i++) guess[i] = 'R';
         matchCount = charCount[hash('R')];
 
-        for (int charHash = 1; charHash < CHARS.length; charHash++) {
+        for (int charHash = hash('R') + 1; charHash < CHAR.length; charHash++) {
             for (int i = 0; charCount[charHash] > 0 && i < KEY_LENGTH; i++) {
-                if (correct[i]) {
-                    i++;
-                    continue;
-                }
+                if (correct[i]) continue;
+
 
                 char originalChar = guess[i];
-                guess[i] = CHARS[charHash];
+                guess[i] = CHAR[charHash];
                 int newMatchCount = sk.guess(String.valueOf(guess));
+                System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), matchCount);
 
                 switch (newMatchCount - matchCount) {
                     case 1 -> {
                         correct[i] = true;
                         charCount[charHash]--;
+                        matchCount = newMatchCount;
                     }
                     case -1 -> {
                         correct[i] = true;
-                        guess[i] = originalChar;
                         charCount[hash(originalChar)]--;
+                        guess[i] = originalChar;
                     }
+                    case 0 -> guess[i] = originalChar;
                 }
-
-                matchCount = newMatchCount;
             }
         }
 
