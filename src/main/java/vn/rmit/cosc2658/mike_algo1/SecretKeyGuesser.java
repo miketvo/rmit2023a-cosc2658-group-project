@@ -1,7 +1,7 @@
 package vn.rmit.cosc2658.mike_algo1;
 
-
 import vn.rmit.cosc2658.SecretKey;
+
 
 public class SecretKeyGuesser {
     private static final char[] CHAR = "RMIT".toCharArray();  // Possible letters
