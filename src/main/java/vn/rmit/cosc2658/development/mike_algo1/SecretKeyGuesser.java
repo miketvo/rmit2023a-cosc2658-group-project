@@ -8,10 +8,9 @@ public class SecretKeyGuesser {
     
 
     public static String start(SecretKey sk, int skLen, boolean verbose) {
-        // Store the number of occurrences for each character R, M, I, and T.
-        int[] charCount = new int[CHAR.length];
+        int[] charFreq = new int[CHAR.length];  // Store the number of occurrences (frequency) for each character R, M, I, and T
 
-        int matchCount, charCountSum = 0;
+        int matchCount, charCountSum = 0, mostCommonCharHash = 0;
         for (
                 // Getting the number of occurrences for each character R, M, and I (without T) from the secret key.
                 // Stop if reaching T, or if the total number of occurrences has reached 16 already, to save us more
@@ -30,8 +29,9 @@ public class SecretKeyGuesser {
                 return guess;
             }
 
-            charCount[charHash] = matchCount;
+            charFreq[charHash] = matchCount;
             charCountSum += matchCount;
+            if (charHash != 0 && charFreq[mostCommonCharHash] < matchCount) mostCommonCharHash = charHash;
         }
 
         if (charCountSum == 0) {
@@ -43,42 +43,52 @@ public class SecretKeyGuesser {
         }
 
         if (charCountSum < skLen) {
-            // The number of occurrences of the last character T can be obtained by simply subtracting the key length by
-            // the total number of occurrences of the other characters. This saves us 1 SecretKey.guess() call.
-            charCount[CHAR.length - 1] = skLen - charCountSum;
+            // The frequency of the last character T can be obtained by simply subtracting the key length by the total
+            // number of occurrences of the other characters. This saves us 1 SecretKey.guess() call.
+            charFreq[CHAR.length - 1] = skLen - charCountSum;
         }
 
 
+        // Baseline guess is a string filled with the most common character (the one with the highest frequency). This
+        // will save us more SecretKey.guess() calls, as our Main algorithm below would not have to call
+        // SecretKey.guess() for:
+        //     - Characters that we know are not in the key (frequency equal to 0 after the above steps);
+        //     - Multiple incorrect guesses the same index.
+        char[] guess = Character.toString(CHAR[mostCommonCharHash]).repeat(skLen).toCharArray();
+        matchCount = charFreq[mostCommonCharHash];
         boolean[] correct = new boolean[skLen];  // Assume that no correct character has been found
-        char[] guess = "R".repeat(skLen).toCharArray();  // Baseline guess is 16 R's
-        matchCount = charCount[0];
 
         // Main algorithm
-        for (int charHash = 1; charHash < CHAR.length; charHash++) {  // Consider M, I, and T
+        for (
+                // Consider the remaining characters
+                int charHash = (mostCommonCharHash + 1) % CHAR.length;
+                charHash != mostCommonCharHash;
+                charHash = (charHash + 1) % CHAR.length
+        ) {
             for (
-                    // Linear search: Consider each character position of the key from left to right to be replaced with
-                    // M, I, or T. Stop early if we have used up our replacing character.
-                    int i = 0;
-                    charCount[charHash] > 0 && i < skLen;
-                    i++
+                    // Linear search: Consider each character index of the key from left to right to be replaced with
+                    // one of the remaining characters. Stop early if we have used up our replacing character.
+                    int index = 0;
+                    charFreq[charHash] > 0 && index < skLen;
+                    index++
             ) {
-                if (correct[i]) continue;  // Skip if we know we have found the correct character for this position
+                if (correct[index]) continue;  // Skip if we know we have found the correct character for this position
 
 
-                char originalChar = guess[i];
-                guess[i] = CHAR[charHash];
+                char originalChar = guess[index];
+                guess[index] = CHAR[charHash];
                 int newMatchCount = sk.guess(String.valueOf(guess));
                 if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), matchCount);
 
                 switch (newMatchCount - matchCount) {
-                    case 1 -> {  // Found a correct character for this position: The replacement character
-                        correct[i] = true;
-                        charCount[charHash]--;
+                    case 1 -> {  // Found the correct character for this position: New replacement character
+                        correct[index] = true;
+                        charFreq[charHash]--;
                         matchCount = newMatchCount;
                     }
-                    case -1 -> {  // Found a correct character for this position: The original baseline guess character
-                        correct[i] = true;
-                        guess[i] = originalChar;
+                    case -1 -> {  // Found the correct character for this position: Original baseline guess
+                        correct[index] = true;
+                        guess[index] = originalChar;
                     }
                 }
             }
