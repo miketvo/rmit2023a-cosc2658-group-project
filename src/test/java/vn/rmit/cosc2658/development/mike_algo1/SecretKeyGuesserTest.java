@@ -71,20 +71,27 @@ class SecretKeyGuesserTest {
 
     @Test
     void randomKeyVariableLengthTest() {
-        final int MAX_KEY_LENGTH = 32;
+        final int MAX_KEY_LENGTH = 256;
+        double[] timerResults = new double[MAX_KEY_LENGTH - 1];
         int[] countResults = new int[MAX_KEY_LENGTH - 1];
         String[] secretKeys = new String[MAX_KEY_LENGTH - 1];
 
         for (int keyLength = 1; keyLength < MAX_KEY_LENGTH; keyLength++) {
             SecretKey sk = new SecretKey(keyLength, 0);  // Seed = 0 to ensure reproducible results
+
+            long start = System.nanoTime();
             assertEquals(SecretKeyGuesser.start(sk, keyLength, false), sk.getKey());
+            long end = System.nanoTime();
+
+            timerResults[keyLength - 1] = (end - start) / 1_000_000.0F;  // Convert: ns --> ms
             countResults[keyLength - 1] = sk.getGuessCount();
             secretKeys[keyLength - 1] = sk.getKey();
+
         }
 
         System.out.println("[ ===== RESULTS ===== ]");
         for (int i = 0; i < MAX_KEY_LENGTH - 1; i++) {
-            System.out.printf("\"%s\" took %d guesses.\n", secretKeys[i], countResults[i]);
+            System.out.printf("\"%s\" took %d guesses in %.4f (ms).\n", secretKeys[i], countResults[i], timerResults[i]);
         }
     }
 }
