@@ -60,7 +60,7 @@ class SecretKeyGuesserTest {
         int countSum = 0;
         for (int i = 0; i < MAX_ITER; i++) {
             SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
-            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN), sk.getKey());
+            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, false), sk.getKey());
             countSum += sk.getGuessCount();
         }
         System.out.printf(
@@ -71,20 +71,26 @@ class SecretKeyGuesserTest {
 
     @Test
     void randomKeyVariableLengthTest() {
-        final int MAX_KEY_LENGTH = 32;
+        final int MAX_KEY_LENGTH = 256;
+        double[] timerResults = new double[MAX_KEY_LENGTH - 1];
         int[] countResults = new int[MAX_KEY_LENGTH - 1];
         String[] secretKeys = new String[MAX_KEY_LENGTH - 1];
 
         for (int keyLength = 1; keyLength < MAX_KEY_LENGTH; keyLength++) {
             SecretKey sk = new SecretKey(keyLength, 0);  // Seed = 0 to ensure reproducible results
-            assertEquals(SecretKeyGuesser.start(sk, keyLength), sk.getKey());
+
+            long start = System.nanoTime();
+            assertEquals(SecretKeyGuesser.start(sk, keyLength, false), sk.getKey());
+            long end = System.nanoTime();
+
+            timerResults[keyLength - 1] = (end - start) / 1_000_000.0F;  // Convert: ns --> ms
             countResults[keyLength - 1] = sk.getGuessCount();
             secretKeys[keyLength - 1] = sk.getKey();
         }
 
         System.out.println("[ ===== RESULTS ===== ]");
         for (int i = 0; i < MAX_KEY_LENGTH - 1; i++) {
-            System.out.printf("\"%s\" took %d guesses.\n", secretKeys[i], countResults[i]);
+            System.out.printf("\"%s\" took %d guesses in %.4f (ms).\n", secretKeys[i], countResults[i], timerResults[i]);
         }
     }
 }
