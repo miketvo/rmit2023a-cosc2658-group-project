@@ -40,17 +40,6 @@ public class SecretKeyGuesser {
         return ((charHash + 1) % CHAR.length);
     }
 
-    public static String start(SecretKey secretKey, int secretKeyLen) {
-        String guess = startInitGuess(secretKey, secretKeyLen);
-        if (guess.equals("")) {
-            // Our Main algorithm below would not have to call SecretKey.guess() for:
-            //     - Characters that we know are not in the key (frequency equal to 0 after the above steps);
-            //     - Multiple incorrect guesses the same index.
-            return startMainGuess(secretKey, secretKeyLen);
-        }
-        return guess;
-    }
-
     private static String startInitGuess(SecretKey secretKey, int secretKeyLen) {
         int totalFreq_CharRMI = 0;
 
@@ -123,6 +112,17 @@ public class SecretKeyGuesser {
             }
         }
         return secretKey(String.valueOf(guess));
+    }
+
+    public static String start(SecretKey secretKey, int secretKeyLen) {
+        String guess = startInitGuess(secretKey, secretKeyLen);
+        if (guess.equals("")) {
+            // Our Main algorithm below would not have to call SecretKey.guess() for:
+            //     - Characters that we know are not in the key (frequency equal to 0 after the above steps);
+            //     - Multiple incorrect guesses the same index.
+            return startMainGuess(secretKey, secretKeyLen);
+        }
+        return guess;
     }
 
     public static String start(SecretKey secretKey, int secretKeyLen, boolean isVerbose) {
