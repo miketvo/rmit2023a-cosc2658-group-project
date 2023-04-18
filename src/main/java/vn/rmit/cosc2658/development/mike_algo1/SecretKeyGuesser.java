@@ -35,6 +35,10 @@ public class SecretKeyGuesser {
         return matches;
     }
 
+    private static int nextCharPositionFrom(int charHash) {
+        return ((charHash + 1) % CHAR.length);
+    }
+
     public static String start(SecretKey secretKey, int secretKeyLen) {
 
         int matchCount, totalFreq_CharRMI = 0;
@@ -74,19 +78,17 @@ public class SecretKeyGuesser {
 
         String repeatedMostCommonChar = Character.toString(CHAR[mostCommonCharHash]).repeat(secretKeyLen);
         char[] guess = repeatedMostCommonChar.toCharArray();
-        matchCount = charFreq[mostCommonCharHash];
+        int mostMatchCount = charFreq[mostCommonCharHash];
         boolean[] correct = new boolean[secretKeyLen];  // Assume that no correct character has been found
 
         // Main algorithm
         for (
-                // Consider the remaining characters
-                int charHash = (mostCommonCharHash + 1) % CHAR.length;
+                int charHash = nextCharPositionFrom(mostCommonCharHash);
                 charHash != mostCommonCharHash;
-                charHash = (charHash + 1) % CHAR.length
+                charHash = nextCharPositionFrom(charHash)
         ) {
             for (
-                    // Linear search: Consider each character index of the key from left to right to be replaced with
-                    // one of the remaining characters. Stop early if we have used up our replacing character.
+                    // Stop early if we have used up our remaining characters from CHAR.
                     int positionInKey = 0;
                     charFreq[charHash] > 0 && positionInKey < secretKeyLen;
                     positionInKey++
@@ -97,13 +99,13 @@ public class SecretKeyGuesser {
                 guess[positionInKey] = CHAR[charHash];
                 int newMatchCount = countKeyMatches(secretKey, String.valueOf(guess));
 
-                switch (newMatchCount - matchCount) {
-                    case 1 -> {  // Found the correct character for this position: New replacement character
+                switch (newMatchCount - mostMatchCount) {
+                    case 1 -> {  // The next character is in correct position
                         correct[positionInKey] = true;
                         charFreq[charHash]--;
-                        matchCount = newMatchCount;
+                        mostMatchCount = newMatchCount;
                     }
-                    case -1 -> {  // Found the correct character for this position: Original baseline guess
+                    case -1 -> {  // The original character is in correct position
                         correct[positionInKey] = true;
                         guess[positionInKey] = originalChar;
                     }
