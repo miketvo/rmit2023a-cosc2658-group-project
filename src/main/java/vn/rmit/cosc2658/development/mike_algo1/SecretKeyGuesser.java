@@ -7,17 +7,17 @@ public class SecretKeyGuesser {
     private static final char[] CHAR = "RMIT".toCharArray();  // Possible letters
     
 
-    public static void start(SecretKey sk, int skLen) {
+    public static String start(SecretKey sk, int skLen, boolean verbose) {
         int[] charCount = new int[CHAR.length];  // Store the number of occurrences for each character R, M, I, and T
         int matchCount;
         for (char c : CHAR) {                    // Getting the number of occurrences for each character R, M, I, and T from the secret key
             String guess = Character.toString(c).repeat(skLen);
             matchCount = sk.guess(guess);
-            System.out.printf("Guessing \"%s\", %d match...\n", guess, matchCount);
+            if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, matchCount);
 
             if (matchCount == skLen) {      // Early termination for edge cases of keys that contains only 1 character 16 times
-                System.out.printf("I found the secret key. It is \"%s\"\n", guess);
-                return;
+                if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
+                return guess;
             }
 
             charCount[hash(c)] = matchCount;
@@ -37,7 +37,7 @@ public class SecretKeyGuesser {
                 char originalChar = guess[i];
                 guess[i] = CHAR[charHash];
                 int newMatchCount = sk.guess(String.valueOf(guess));
-                System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), matchCount);
+                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), matchCount);
 
                 switch (newMatchCount - matchCount) {
                     case 1 -> {
@@ -54,7 +54,12 @@ public class SecretKeyGuesser {
             }
         }
 
-        System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
+        if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
+        return String.valueOf(guess);
+    }
+
+    public static String start(SecretKey sk, int skLen) {
+        return start(sk, skLen, false);
     }
     
     

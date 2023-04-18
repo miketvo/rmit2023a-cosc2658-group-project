@@ -3,6 +3,8 @@ package vn.rmit.cosc2658.development.mike_algo1;
 import org.junit.jupiter.api.Test;
 import vn.rmit.cosc2658.development.SecretKey;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 
 class SecretKeyGuesserTest {
     private final SecretKey secretKey1 = new SecretKey("RRRRRRRRRMITRMIT");
@@ -17,56 +19,68 @@ class SecretKeyGuesserTest {
 
 
     @Test
-    void test1() {
-        SecretKeyGuesser.start(secretKey1);
+    void key16Test() {
+        assertEquals(SecretKeyGuesser.start(secretKey1, 16), secretKey1.getKey());
         System.out.printf("%s took %d guesses.\n", secretKey1.getKey(), secretKey1.getGuessCount());
-    }
 
-    @Test
-    void test2() {
-        SecretKeyGuesser.start(secretKey2);
+        assertEquals(SecretKeyGuesser.start(secretKey2, 16), secretKey2.getKey());
         System.out.printf("%s took %d guesses.\n", secretKey2.getKey(), secretKey2.getGuessCount());
-    }
 
-    @Test
-    void test3() {
-        SecretKeyGuesser.start(secretKey3);
+        assertEquals(SecretKeyGuesser.start(secretKey3, 16), secretKey3.getKey());
         System.out.printf("%s took %d guesses.\n", secretKey3.getKey(), secretKey3.getGuessCount());
-    }
 
-    @Test
-    void test4() {
-        SecretKeyGuesser.start(secretKey4);
+        assertEquals(SecretKeyGuesser.start(secretKey4, 16), secretKey4.getKey());
         System.out.printf("%s took %d guesses.\n", secretKey4.getKey(), secretKey4.getGuessCount());
-    }
 
-    @Test
-    void test5() {
-        SecretKeyGuesser.start(secretKey5);
+        assertEquals(SecretKeyGuesser.start(secretKey5, 16), secretKey5.getKey());
         System.out.printf("%s took %d guesses.\n", secretKey5.getKey(), secretKey5.getGuessCount());
-    }
 
-    @Test
-    void test6() {
-        SecretKeyGuesser.start(secretKey6);
+        assertEquals(SecretKeyGuesser.start(secretKey6, 16), secretKey6.getKey());
         System.out.printf("%s took %d guesses.\n", secretKey6.getKey(), secretKey6.getGuessCount());
-    }
 
-    @Test
-    void test7() {
-        SecretKeyGuesser.start(secretKey7);
+        assertEquals(SecretKeyGuesser.start(secretKey7, 16), secretKey7.getKey());
         System.out.printf("%s took %d guesses.\n", secretKey7.getKey(), secretKey7.getGuessCount());
-    }
 
-    @Test
-    void test8() {
-        SecretKeyGuesser.start(secretKey8);
+        assertEquals(SecretKeyGuesser.start(secretKey8, 16), secretKey8.getKey());
         System.out.printf("%s took %d guesses.\n", secretKey8.getKey(), secretKey8.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey9, 16), secretKey9.getKey());
+        System.out.printf("%s took %d guesses.\n", secretKey9.getKey(), secretKey9.getGuessCount());
     }
 
     @Test
-    void test9() {
-        SecretKeyGuesser.start(secretKey9);
-        System.out.printf("%s took %d guesses.\n", secretKey9.getKey(), secretKey9.getGuessCount());
+    void randomKey16AverageResultTest() {
+        final int MAX_ITER = 100_000;
+        final int KEY_LEN = 16;
+
+        int countSum = 0;
+        for (int i = 0; i < MAX_ITER; i++) {
+            SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
+            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, false), sk.getKey());
+            countSum += sk.getGuessCount();
+        }
+        System.out.printf(
+                "Average number of guesses for key of length %d over %d iterations: %.2f\n",
+                KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
+        );
+    }
+
+    @Test
+    void randomKeyVariableLengthTest() {
+        final int MAX_KEY_LENGTH = 32;
+        int[] countResults = new int[MAX_KEY_LENGTH - 1];
+        String[] secretKeys = new String[MAX_KEY_LENGTH - 1];
+
+        for (int keyLength = 1; keyLength < MAX_KEY_LENGTH; keyLength++) {
+            SecretKey sk = new SecretKey(keyLength, 0);  // Seed = 0 to ensure reproducible results
+            assertEquals(SecretKeyGuesser.start(sk, keyLength, false), sk.getKey());
+            countResults[keyLength - 1] = sk.getGuessCount();
+            secretKeys[keyLength - 1] = sk.getKey();
+        }
+
+        System.out.println("[ ===== RESULTS ===== ]");
+        for (int i = 0; i < MAX_KEY_LENGTH - 1; i++) {
+            System.out.printf("\"%s\" took %d guesses.\n", secretKeys[i], countResults[i]);
+        }
     }
 }
