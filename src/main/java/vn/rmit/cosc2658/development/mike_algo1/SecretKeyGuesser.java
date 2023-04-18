@@ -49,11 +49,9 @@ public class SecretKeyGuesser {
         }
 
 
-
         boolean[] correct = new boolean[skLen];  // Assume that no correct character has been found
         char[] guess = "R".repeat(skLen).toCharArray();  // Baseline guess is 16 R's
         matchCount = charCount[0];
-
 
         // Main algorithm
         for (int charHash = 1; charHash < CHAR.length; charHash++) {  // Consider M, I, and T
