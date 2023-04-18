@@ -60,7 +60,7 @@ class SecretKeyGuesserTest {
         int countSum = 0;
         for (int i = 0; i < MAX_ITER; i++) {
             SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
-            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, false), sk.getKey());
+            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN), sk.getKey());
             countSum += sk.getGuessCount();
         }
         System.out.printf(
@@ -77,7 +77,7 @@ class SecretKeyGuesserTest {
 
         for (int keyLength = 1; keyLength < MAX_KEY_LENGTH; keyLength++) {
             SecretKey sk = new SecretKey(keyLength, 0);  // Seed = 0 to ensure reproducible results
-            assertEquals(SecretKeyGuesser.start(sk, keyLength, false), sk.getKey());
+            assertEquals(SecretKeyGuesser.start(sk, keyLength), sk.getKey());
             countResults[keyLength - 1] = sk.getGuessCount();
             secretKeys[keyLength - 1] = sk.getKey();
         }

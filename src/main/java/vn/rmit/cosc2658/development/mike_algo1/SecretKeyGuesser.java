@@ -8,8 +8,9 @@ public class SecretKeyGuesser {
     private static final int T_HASH = CHAR.length - 1;
     private static int[] charFreq = new int[CHAR.length];  // frequency of character R, M, I, and T;
     private static int mostCommonCharHash = 0;
+    private static boolean verbose = false;
 
-    private static String secretKey(String secretKey, boolean verbose) {
+    private static String secretKey(String secretKey) {
         if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", secretKey);
         return secretKey;
     }
@@ -28,13 +29,13 @@ public class SecretKeyGuesser {
         if (charHash != 0 && charFreq[mostCommonCharHash] < currentMatches) mostCommonCharHash = charHash;
     }
 
-    private static int countKeyMatches(SecretKey secretKey, String guess, boolean verbose) {
+    private static int countKeyMatches(SecretKey secretKey, String guess) {
         int matches = secretKey.guess(guess);
         if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, matches);
         return matches;
     }
 
-    public static String start(SecretKey secretKey, int secretKeyLen, boolean verbose) {
+    public static String start(SecretKey secretKey, int secretKeyLen) {
 
         int matchCount, totalFreq_CharRMI = 0;
 
@@ -45,11 +46,11 @@ public class SecretKeyGuesser {
                 charHash++
         ) {
             String repeatedChar = Character.toString(CHAR[charHash]).repeat(secretKeyLen);
-            matchCount = countKeyMatches(secretKey, repeatedChar, verbose);
+            matchCount = countKeyMatches(secretKey, repeatedChar);
 
             if (matchCount == secretKeyLen) {
                 // Key that contains only 1 repeating character.
-                return secretKey(repeatedChar, verbose);
+                return secretKey(repeatedChar);
             }
 
             charFreq[charHash] = matchCount;
@@ -61,7 +62,7 @@ public class SecretKeyGuesser {
         if (totalFreq_CharRMI == 0) { // No occurrences of all other 'R', 'M', 'I' characters
 
             String repeated_CharT = "T".repeat(secretKeyLen);
-            return secretKey(repeated_CharT, verbose);
+            return secretKey(repeated_CharT);
         } else {
 
             getFrequency_CharT(secretKeyLen, totalFreq_CharRMI);
@@ -94,7 +95,7 @@ public class SecretKeyGuesser {
 
                 char originalChar = guess[positionInKey];
                 guess[positionInKey] = CHAR[charHash];
-                int newMatchCount = countKeyMatches(secretKey, String.valueOf(guess), verbose);
+                int newMatchCount = countKeyMatches(secretKey, String.valueOf(guess));
 
                 switch (newMatchCount - matchCount) {
                     case 1 -> {  // Found the correct character for this position: New replacement character
@@ -109,10 +110,11 @@ public class SecretKeyGuesser {
                 }
             }
         }
-        return secretKey(String.valueOf(guess), verbose);
+        return secretKey(String.valueOf(guess));
     }
 
-    public static String start(SecretKey secretKey, int secretKeyLen) {
-        return start(secretKey, secretKeyLen, true);
+    public static String start(SecretKey secretKey, int secretKeyLen, boolean isVerbose) {
+        verbose = isVerbose;
+        return start(secretKey, secretKeyLen);
     }
 }
