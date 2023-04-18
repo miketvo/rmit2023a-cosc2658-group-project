@@ -5,17 +5,17 @@ import vn.rmit.cosc2658.SecretKey;
 
 public class SecretKeyGuesser {
     private static final char[] CHAR = "RMIT".toCharArray();  // Possible letters
-    private static final int KEY_LENGTH = 16;
+    
 
-    public static void start(SecretKey sk) {
+    public static void start(SecretKey sk, int skLen) {
         int[] charCount = new int[CHAR.length];  // Store the number of occurrences for each character R, M, I, and T
         int matchCount;
         for (char c : CHAR) {                    // Getting the number of occurrences for each character R, M, I, and T from the secret key
-            String guess = Character.toString(c).repeat(KEY_LENGTH);
+            String guess = Character.toString(c).repeat(skLen);
             matchCount = sk.guess(guess);
             System.out.printf("Guessing \"%s\", %d match...\n", guess, matchCount);
 
-            if (matchCount == KEY_LENGTH) {      // Early termination for edge cases of keys that contains only 1 character 16 times
+            if (matchCount == skLen) {      // Early termination for edge cases of keys that contains only 1 character 16 times
                 System.out.printf("I found the secret key. It is \"%s\"\n", guess);
                 return;
             }
@@ -24,17 +24,13 @@ public class SecretKeyGuesser {
         }
 
 
-        // Assume we have found no correct character
-        boolean[] correct = new boolean[KEY_LENGTH];
-        for (int i = 0; i < KEY_LENGTH; i++) correct[i] = false;
-
-        // First guess is 16 R's
-        char[] guess = "R".repeat(KEY_LENGTH).toCharArray();
+        boolean[] correct = new boolean[skLen];  // Assume we have found no correct character
+        char[] guess = "R".repeat(skLen).toCharArray();  // First guess is 16 R's
         matchCount = charCount[hash('R')];
 
         // Main algorithm
         for (int charHash = hash('R') + 1; charHash < CHAR.length; charHash++) {  // Consider M, I, and T
-            for (int i = 0; charCount[charHash] > 0 && i < KEY_LENGTH; i++) {
+            for (int i = 0; charCount[charHash] > 0 && i < skLen; i++) {
                 if (correct[i]) continue;
 
 
