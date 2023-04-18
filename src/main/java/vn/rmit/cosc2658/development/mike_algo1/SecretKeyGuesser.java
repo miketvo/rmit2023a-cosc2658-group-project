@@ -8,6 +8,7 @@ public class SecretKeyGuesser {
     private static final int T_HASH = CHAR.length - 1;
     private static int[] charFreq = new int[CHAR.length];  // frequency of character R, M, I, and T;
     private static int mostCommonCharHash = 0;
+    private static int currentMatchCount = 0;
     private static boolean verbose = false;
 
     private static String secretKey(String secretKey) {
@@ -25,8 +26,8 @@ public class SecretKeyGuesser {
         }
     }
 
-    private static void setMostCommonCharHash(int charHash, int currentMatches) {
-        if (charHash != 0 && charFreq[mostCommonCharHash] < currentMatches) mostCommonCharHash = charHash;
+    private static void setMostCommonCharHash(int charHash) {
+        if (charHash != 0 && charFreq[mostCommonCharHash] < currentMatchCount) mostCommonCharHash = charHash;
     }
 
     private static int countKeyMatches(SecretKey secretKey, String guess) {
@@ -41,26 +42,26 @@ public class SecretKeyGuesser {
 
     public static String start(SecretKey secretKey, int secretKeyLen) {
 
-        int matchCount, totalFreq_CharRMI = 0;
+        int totalFreq_CharRMI = 0;
 
         for (
                 int charHash = 0;
-            // Stop if the total number of occurrences has reached 16 already and if reaching T
+            // Stop if the total number of occurrences has reached 16 already and if reaching character T
                 totalFreq_CharRMI < secretKeyLen && charHash < T_HASH;
                 charHash++
         ) {
             String repeatedChar = Character.toString(CHAR[charHash]).repeat(secretKeyLen);
-            matchCount = countKeyMatches(secretKey, repeatedChar);
+            currentMatchCount = countKeyMatches(secretKey, repeatedChar);
 
-            if (matchCount == secretKeyLen) {
+            if (currentMatchCount == secretKeyLen) {
                 // Key that contains only 1 repeating character.
                 return secretKey(repeatedChar);
             }
 
-            charFreq[charHash] = matchCount;
-            totalFreq_CharRMI += matchCount;
+            charFreq[charHash] = currentMatchCount;
+            totalFreq_CharRMI += currentMatchCount;
 
-            setMostCommonCharHash(charHash, matchCount);
+            setMostCommonCharHash(charHash);
         }
 
         if (totalFreq_CharRMI == 0) { // No occurrences of all other 'R', 'M', 'I' characters
