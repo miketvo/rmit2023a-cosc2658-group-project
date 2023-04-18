@@ -6,7 +6,7 @@ import vn.rmit.cosc2658.development.SecretKey;
 public class SecretKeyGuesser {
     private static final char[] CHAR = "RMIT".toCharArray();  // Possible letters.
     private static final int T_HASH = CHAR.length - 1;
-    private static int[] charFreq = new int[CHAR.length];  // frequency of character R, M, I, and T;
+    private static final int[] charFreq = new int[CHAR.length];  // frequency of character R, M, I, and T;
     private static int mostCommonCharHash = 0;
     private static int currentMatchCount = 0;
     private static boolean verbose = false;
