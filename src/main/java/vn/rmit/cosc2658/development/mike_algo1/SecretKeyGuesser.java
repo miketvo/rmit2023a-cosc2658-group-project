@@ -30,16 +30,6 @@ public class SecretKeyGuesser {
         if (charHash != 0 && charFreq[mostCommonCharHash] < currentMatchCount) mostCommonCharHash = charHash;
     }
 
-    private static int countKeyMatches(SecretKey secretKey, String guess) {
-        int matches = secretKey.guess(guess);
-        if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, matches);
-        return matches;
-    }
-
-    private static int nextCharPositionFrom(int charHash) {
-        return ((charHash + 1) % CHAR.length);
-    }
-
     private static String startInitGuess(SecretKey secretKey, int secretKeyLen) {
         int totalFreq_CharRMI = 0;
 
@@ -72,6 +62,16 @@ public class SecretKeyGuesser {
             getFrequency_CharT(secretKeyLen, totalFreq_CharRMI);
         }
         return "";
+    }
+
+    private static int countKeyMatches(SecretKey secretKey, String guess) {
+        int matches = secretKey.guess(guess);
+        if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, matches);
+        return matches;
+    }
+
+    private static int nextCharPositionFrom(int charHash) {
+        return ((charHash + 1) % CHAR.length);
     }
 
     private static String startMainGuess(SecretKey secretKey, int secretKeyLen) {
