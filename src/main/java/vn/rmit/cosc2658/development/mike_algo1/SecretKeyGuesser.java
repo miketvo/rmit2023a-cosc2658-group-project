@@ -27,6 +27,13 @@ public class SecretKeyGuesser {
     private static void setMostCommonCharHash(int charHash, int currentMatches) {
         if (charHash != 0 && charFreq[mostCommonCharHash] < currentMatches) mostCommonCharHash = charHash;
     }
+
+    private static int countKeyMatches(SecretKey secretKey, String guess, boolean verbose) {
+        int matches = secretKey.guess(guess);
+        if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, matches);
+        return matches;
+    }
+
     public static String start(SecretKey secretKey, int secretKeyLen, boolean verbose) {
 
         int matchCount, totalFreq_CharRMI = 0;
@@ -38,8 +45,7 @@ public class SecretKeyGuesser {
                 charHash++
         ) {
             String repeatedChar = Character.toString(CHAR[charHash]).repeat(secretKeyLen);
-            matchCount = secretKey.guess(repeatedChar);
-            if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", repeatedChar, matchCount);
+            matchCount = countKeyMatches(secretKey, repeatedChar, verbose);
 
             if (matchCount == secretKeyLen) {
                 // Key that contains only 1 repeating character.
@@ -80,37 +86,33 @@ public class SecretKeyGuesser {
             for (
                     // Linear search: Consider each character index of the key from left to right to be replaced with
                     // one of the remaining characters. Stop early if we have used up our replacing character.
-                    int index = 0;
-                    charFreq[charHash] > 0 && index < secretKeyLen;
-                    index++
+                    int positionInKey = 0;
+                    charFreq[charHash] > 0 && positionInKey < secretKeyLen;
+                    positionInKey++
             ) {
-                if (correct[index]) continue;  // Skip if we know we have found the correct character for this position
+                if (correct[positionInKey]) continue;
 
-
-                char originalChar = guess[index];
-                guess[index] = CHAR[charHash];
-                int newMatchCount = secretKey.guess(String.valueOf(guess));
-                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), matchCount);
+                char originalChar = guess[positionInKey];
+                guess[positionInKey] = CHAR[charHash];
+                int newMatchCount = countKeyMatches(secretKey, String.valueOf(guess), verbose);
 
                 switch (newMatchCount - matchCount) {
                     case 1 -> {  // Found the correct character for this position: New replacement character
-                        correct[index] = true;
+                        correct[positionInKey] = true;
                         charFreq[charHash]--;
                         matchCount = newMatchCount;
                     }
                     case -1 -> {  // Found the correct character for this position: Original baseline guess
-                        correct[index] = true;
-                        guess[index] = originalChar;
+                        correct[positionInKey] = true;
+                        guess[positionInKey] = originalChar;
                     }
                 }
             }
         }
-
-        if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
-        return String.valueOf(guess);
+        return secretKey(String.valueOf(guess), verbose);
     }
 
-    public static String start(SecretKey sk, int skLen) {
-        return start(sk, skLen, true);
+    public static String start(SecretKey secretKey, int secretKeyLen) {
+        return start(secretKey, secretKeyLen, true);
     }
 }
