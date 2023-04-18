@@ -1,4 +1,4 @@
-package vn.rmit.cosc2658;
+package vn.rmit.cosc2658.development;
 
 import java.util.Random;
 

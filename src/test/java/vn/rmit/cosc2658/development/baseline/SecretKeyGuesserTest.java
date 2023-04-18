@@ -1,9 +1,7 @@
-package vn.rmit.cosc2658.baseline;
+package vn.rmit.cosc2658.development.baseline;
 
 import org.junit.jupiter.api.Test;
-import vn.rmit.cosc2658.SecretKey;
-
-import static org.junit.jupiter.api.Assertions.*;
+import vn.rmit.cosc2658.development.SecretKey;
 
 
 class SecretKeyGuesserTest {

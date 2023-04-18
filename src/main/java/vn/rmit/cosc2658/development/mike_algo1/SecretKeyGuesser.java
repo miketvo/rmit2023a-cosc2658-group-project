@@ -1,6 +1,6 @@
-package vn.rmit.cosc2658.mike_algo1;
+package vn.rmit.cosc2658.development.mike_algo1;
 
-import vn.rmit.cosc2658.SecretKey;
+import vn.rmit.cosc2658.development.SecretKey;
 
 
 public class SecretKeyGuesser {
