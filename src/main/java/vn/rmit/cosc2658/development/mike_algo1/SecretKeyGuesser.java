@@ -8,7 +8,9 @@ public class SecretKeyGuesser {
     
 
     public static String start(SecretKey sk, int skLen, boolean verbose) {
-        int[] charCount = new int[CHAR.length];  // Store the number of occurrences for each character R, M, I, and T.
+        // Store the number of occurrences for each character R, M, I, and T.
+        int[] charCount = new int[CHAR.length];
+
         int matchCount, charCountSum = 0;
         for (
                 // Getting the number of occurrences for each character R, M, and I (without T) from the secret key.
@@ -56,11 +58,13 @@ public class SecretKeyGuesser {
         // Main algorithm
         for (int charHash = 1; charHash < CHAR.length; charHash++) {  // Consider M, I, and T
             for (
+                    // Linear search: Consider each character position of the key from left to right to be replaced with
+                    // M, I, or T. Stop early if we have used up our replacing character.
                     int i = 0;
                     charCount[charHash] > 0 && i < skLen;
                     i++
             ) {
-                if (correct[i]) continue;
+                if (correct[i]) continue;  // Skip if we know we have found the correct character for this position
 
 
                 char originalChar = guess[i];
@@ -69,16 +73,15 @@ public class SecretKeyGuesser {
                 if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), matchCount);
 
                 switch (newMatchCount - matchCount) {
-                    case 1 -> {
+                    case 1 -> {  // Found a correct character for this position: The replacement character
                         correct[i] = true;
                         charCount[charHash]--;
                         matchCount = newMatchCount;
                     }
-                    case -1 -> {
+                    case -1 -> {  // Found a correct character for this position: The original baseline guess character
                         correct[i] = true;
                         guess[i] = originalChar;
                     }
-                    case 0 -> guess[i] = originalChar;
                 }
             }
         }
