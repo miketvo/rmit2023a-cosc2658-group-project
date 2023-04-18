@@ -15,7 +15,7 @@ public class SecretKeyGuesser {
             matchCount = sk.guess(guess);
             if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, matchCount);
 
-            if (matchCount == skLen) {      // Early termination for edge cases of keys that contains only 1 character 16 times
+            if (matchCount == skLen) {           // Early termination for edge cases of keys that contains only 1 character 16 times
                 if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
                 return guess;
             }
@@ -59,7 +59,7 @@ public class SecretKeyGuesser {
     }
 
     public static String start(SecretKey sk, int skLen) {
-        return start(sk, skLen, false);
+        return start(sk, skLen, true);
     }
     
     

@@ -21,31 +21,31 @@ class SecretKeyGuesserTest {
     @Test
     void key16Test() {
         assertEquals(SecretKeyGuesser.start(secretKey1, 16), secretKey1.getKey());
-        System.out.printf("%s took %d guesses.\n", secretKey1.getKey(), secretKey1.getGuessCount());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey1.getKey(), secretKey1.getGuessCount());
 
         assertEquals(SecretKeyGuesser.start(secretKey2, 16), secretKey2.getKey());
-        System.out.printf("%s took %d guesses.\n", secretKey2.getKey(), secretKey2.getGuessCount());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey2.getKey(), secretKey2.getGuessCount());
 
         assertEquals(SecretKeyGuesser.start(secretKey3, 16), secretKey3.getKey());
-        System.out.printf("%s took %d guesses.\n", secretKey3.getKey(), secretKey3.getGuessCount());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey3.getKey(), secretKey3.getGuessCount());
 
         assertEquals(SecretKeyGuesser.start(secretKey4, 16), secretKey4.getKey());
-        System.out.printf("%s took %d guesses.\n", secretKey4.getKey(), secretKey4.getGuessCount());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey4.getKey(), secretKey4.getGuessCount());
 
         assertEquals(SecretKeyGuesser.start(secretKey5, 16), secretKey5.getKey());
-        System.out.printf("%s took %d guesses.\n", secretKey5.getKey(), secretKey5.getGuessCount());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey5.getKey(), secretKey5.getGuessCount());
 
         assertEquals(SecretKeyGuesser.start(secretKey6, 16), secretKey6.getKey());
-        System.out.printf("%s took %d guesses.\n", secretKey6.getKey(), secretKey6.getGuessCount());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey6.getKey(), secretKey6.getGuessCount());
 
         assertEquals(SecretKeyGuesser.start(secretKey7, 16), secretKey7.getKey());
-        System.out.printf("%s took %d guesses.\n", secretKey7.getKey(), secretKey7.getGuessCount());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey7.getKey(), secretKey7.getGuessCount());
 
         assertEquals(SecretKeyGuesser.start(secretKey8, 16), secretKey8.getKey());
-        System.out.printf("%s took %d guesses.\n", secretKey8.getKey(), secretKey8.getGuessCount());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey8.getKey(), secretKey8.getGuessCount());
 
         assertEquals(SecretKeyGuesser.start(secretKey9, 16), secretKey9.getKey());
-        System.out.printf("%s took %d guesses.\n", secretKey9.getKey(), secretKey9.getGuessCount());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey9.getKey(), secretKey9.getGuessCount());
     }
 
     @Test
