@@ -5,56 +5,68 @@ import vn.rmit.cosc2658.development.SecretKey;
 
 public class SecretKeyGuesser {
     private static final char[] CHAR = "RMIT".toCharArray();  // Possible letters.
-    
+    private static final int T_HASH = CHAR.length - 1;
+    private static int[] charFreq = new int[CHAR.length];  // frequency of character R, M, I, and T;
+    private static int mostCommonCharHash = 0;
 
+    private static String secretKey(String secretKey, boolean verbose) {
+        if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", secretKey);
+        return secretKey;
+    }
+
+    private static void getFrequency_CharT(int secretKeyLength, int totalFrequency_CharRMI) {
+        if (totalFrequency_CharRMI < secretKeyLength) {
+
+            int frequency_CharT = secretKeyLength - totalFrequency_CharRMI;
+            charFreq[T_HASH] = frequency_CharT;
+        } else {
+            charFreq[T_HASH] = 0;
+        }
+    }
+
+    private static void setMostCommonCharHash(int charHash, int currentMatches) {
+        if (charHash != 0 && charFreq[mostCommonCharHash] < currentMatches) mostCommonCharHash = charHash;
+    }
     public static String start(SecretKey secretKey, int secretKeyLen, boolean verbose) {
-        int[] charFreq = new int[CHAR.length];  // Store the number of occurrences (frequency) for each character R, M, I, and T
 
-        int matchCount, charCountSum = 0, mostCommonCharHash = 0;
+        int matchCount, totalFreq_CharRMI = 0;
+
         for (
-                // Getting the number of occurrences for each character R, M, and I (without T) from the secret key.
-                // Stop if reaching T, or if the total number of occurrences has reached 16 already, to save us more
-                // SecretKey.guess() calls.
                 int charHash = 0;
-                charCountSum < secretKeyLen && charHash < CHAR.length - 1;
+            // Stop if the total number of occurrences has reached 16 already and if reaching T
+                totalFreq_CharRMI < secretKeyLen && charHash < T_HASH;
                 charHash++
         ) {
-            String strOfRepeatedChar = Character.toString(CHAR[charHash]).repeat(secretKeyLen);
-            matchCount = secretKey.guess(strOfRepeatedChar);
-            if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", strOfRepeatedChar, matchCount);
+            String repeatedChar = Character.toString(CHAR[charHash]).repeat(secretKeyLen);
+            matchCount = secretKey.guess(repeatedChar);
+            if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", repeatedChar, matchCount);
 
             if (matchCount == secretKeyLen) {
-                // Early termination for edge cases of keys that contains only 1 repeating character.
-                if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", strOfRepeatedChar);
-                return strOfRepeatedChar;
+                // Key that contains only 1 repeating character.
+                return secretKey(repeatedChar, verbose);
             }
 
             charFreq[charHash] = matchCount;
-            charCountSum += matchCount;
-            if (charHash != 0 && charFreq[mostCommonCharHash] < matchCount) mostCommonCharHash = charHash;
+            totalFreq_CharRMI += matchCount;
+
+            setMostCommonCharHash(charHash, matchCount);
         }
 
-        if (charCountSum == 0) {
-            // No occurrences of all other characters means the key contains only the character T. This saves us 1
-            // SecretKey.guess() call.
-            String guess = "T".repeat(secretKeyLen);
-            if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
-            return guess;
+        if (totalFreq_CharRMI == 0) { // No occurrences of all other 'R', 'M', 'I' characters
+
+            String repeated_CharT = "T".repeat(secretKeyLen);
+            return secretKey(repeated_CharT, verbose);
+        } else {
+
+            getFrequency_CharT(secretKeyLen, totalFreq_CharRMI);
         }
 
-        if (charCountSum < secretKeyLen) {
-            // The frequency of the last character T can be obtained by simply subtracting the key length by the total
-            // number of occurrences of the other characters. This saves us 1 SecretKey.guess() call.
-            charFreq[CHAR.length - 1] = secretKeyLen - charCountSum;
-        }
-
-
-        // Baseline guess is a string filled with the most common character (the one with the highest frequency). This
-        // will save us more SecretKey.guess() calls, as our Main algorithm below would not have to call
-        // SecretKey.guess() for:
+        // Our Main algorithm below would not have to call SecretKey.guess() for:
         //     - Characters that we know are not in the key (frequency equal to 0 after the above steps);
         //     - Multiple incorrect guesses the same index.
-        char[] guess = Character.toString(CHAR[mostCommonCharHash]).repeat(secretKeyLen).toCharArray();
+
+        String repeatedMostCommonChar = Character.toString(CHAR[mostCommonCharHash]).repeat(secretKeyLen);
+        char[] guess = repeatedMostCommonChar.toCharArray();
         matchCount = charFreq[mostCommonCharHash];
         boolean[] correct = new boolean[secretKeyLen];  // Assume that no correct character has been found
 
