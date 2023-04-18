@@ -16,6 +16,7 @@ class SecretKeyGuesserTest {
     private final SecretKey secretKey7 = new SecretKey("RRMIRMTMMITIITMT");
     private final SecretKey secretKey8 = new SecretKey("RRRRMMMMIIIITTTT");
     private final SecretKey secretKey9 = new SecretKey("TTTTIIIIMMMMRRRR");
+    private final SecretKey secretKey10 = new SecretKey("RRRIIIIIRRRRRIIR");
 
 
     @Test
@@ -46,6 +47,9 @@ class SecretKeyGuesserTest {
 
         assertEquals(SecretKeyGuesser.start(secretKey9, 16), secretKey9.getKey());
         System.out.printf("\"%s\" took %d guesses.\n\n", secretKey9.getKey(), secretKey9.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey10, 16), secretKey10.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey10.getKey(), secretKey10.getGuessCount());
     }
 
     @Test

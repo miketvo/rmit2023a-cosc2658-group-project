@@ -12,7 +12,8 @@ public class SecretKeyGuesser {
         int matchCount, charCountSum = 0;
         for (
                 // Getting the number of occurrences for each character R, M, and I (without T) from the secret key.
-                // Stop if reaching T, or if the total number of occurrences reaches 16 already.
+                // Stop if reaching T, or if the total number of occurrences has reached 16 already, to save us more
+                // SecretKey.guess() calls.
                 int charHash = 0;
                 charCountSum < skLen && charHash < CHAR.length - 1;
                 charHash++
@@ -32,7 +33,9 @@ public class SecretKeyGuesser {
         }
 
         if (charCountSum == 0) {
-            String guess = "T".repeat(skLen);  // No occurrences of all other characters means the key contains only the character T
+            // No occurrences of all other characters means the key contains only the character T. This saves us 1
+            // SecretKey.guess() call.
+            String guess = "T".repeat(skLen);
             if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
             return guess;
         }
