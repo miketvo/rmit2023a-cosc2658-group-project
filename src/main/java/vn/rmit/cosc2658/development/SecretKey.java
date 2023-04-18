@@ -58,8 +58,4 @@ public class SecretKey {
     public String getKey() {
         return key;
     }
-
-    public int getKeyLength() {
-        return key.length();
-    }
 }
