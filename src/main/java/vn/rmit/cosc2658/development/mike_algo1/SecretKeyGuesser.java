@@ -4,9 +4,8 @@ import vn.rmit.cosc2658.development.SecretKey;
 
 
 public class SecretKeyGuesser {
-    private static final char[] CHAR = "RMIT".toCharArray();     // Possible letters
+    private static final char[] CHAR = "RMIT".toCharArray();     // Possible characters in secret key
     private static final int[] charFreq = new int[CHAR.length];  // Number of occurrences (frequency) for each possible character
-    private static int totalCharFreq = 0;                        // The sum of charFreq
     private static int mostCommonCharHash = 0;                   // For optimization purposes. Initial assumption: R
 
 
@@ -26,9 +25,8 @@ public class SecretKeyGuesser {
         - Space complexity: O(1)
 
         ********************** */
-
-        // Step 1: Find the frequency of each character R, M and I (except T - it will be calculated below). 3 guesses.
-        for (int charHash = 0; totalCharFreq < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
+        int totalCharFreqRMI = 0;  // The sum of charFreq of R, M, and I
+        for (int charHash = 0; totalCharFreqRMI < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
             String guess = Character.toString(CHAR[charHash]).repeat(secretKeyLength);
 
             int matchCount = secretKey.guess(guess);
@@ -39,19 +37,17 @@ public class SecretKeyGuesser {
             }
 
             charFreq[charHash] = matchCount;
-            totalCharFreq += matchCount;
+            totalCharFreqRMI += matchCount;
             if (charHash != 0 && charFreq[mostCommonCharHash] < matchCount) mostCommonCharHash = charHash;
         }
 
-        // Step 2: totalCharFreq == 0 means key contains only the character T. Saves us 1 SecretKey.guess() call.
-        if (totalCharFreq == 0) {
+        if (totalCharFreqRMI == 0) {
             String guess = "T".repeat(secretKeyLength);
             if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
             return guess;
         }
 
-        // Step 3: Otherwise, Frequency of T = secretKeyLength - totalCharFreq. Saves us 1 SecretKey.guess() call.
-        if (totalCharFreq < secretKeyLength) charFreq[CHAR.length - 1] = secretKeyLength - totalCharFreq;
+        if (totalCharFreqRMI < secretKeyLength) charFreq[CHAR.length - 1] = secretKeyLength - totalCharFreqRMI;
 
 
         /* *************************************************************************************************************
@@ -75,25 +71,25 @@ public class SecretKeyGuesser {
         int cumulativeMatchCount = charFreq[mostCommonCharHash];
         boolean[] correct = new boolean[secretKeyLength];
 
-        for (int charHash = (mostCommonCharHash + 1) % CHAR.length; charHash != mostCommonCharHash; charHash = (charHash + 1) % CHAR.length) {
-            for (int index = 0; charFreq[charHash] > 0 && index < secretKeyLength; index++) {
-                if (correct[index]) continue;
+        for (int charHash = nextCharHashOf(mostCommonCharHash); charHash != mostCommonCharHash; charHash = nextCharHashOf(charHash)) {
+            for (int charPos = 0; charFreq[charHash] > 0 && charPos < secretKeyLength; charPos++) {
+                if (correct[charPos]) continue;
 
 
-                char originalChar = guess[index];
-                guess[index] = CHAR[charHash];
-                int matchCount = secretKey.guess(String.valueOf(guess));
+                char originalChar = guess[charPos];
+                guess[charPos] = CHAR[charHash];
+                int newMatchCount = secretKey.guess(String.valueOf(guess));
                 if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), cumulativeMatchCount);
 
-                switch (matchCount - cumulativeMatchCount) {
-                    case 1 -> {  // Found the correct character for this position: New replacement character
-                        correct[index] = true;
+                switch (newMatchCount - cumulativeMatchCount) {
+                    case 1 -> {  // New replacement character is the correct for this position
+                        correct[charPos] = true;
                         charFreq[charHash]--;
-                        cumulativeMatchCount = matchCount;
+                        cumulativeMatchCount = newMatchCount;
                     }
-                    case -1 -> {  // Found the correct character for this position: Original baseline guess
-                        correct[index] = true;
-                        guess[index] = originalChar;
+                    case -1 -> {  // Original baseline guess is correct for this position
+                        correct[charPos] = true;
+                        guess[charPos] = originalChar;
                     }
                 }
             }
@@ -103,7 +99,18 @@ public class SecretKeyGuesser {
         return String.valueOf(guess);
     }
 
-    public static String start(SecretKey sk, int skLen) {
-        return start(sk, skLen, true);
+    /**
+     * @param secretKey The secret key to be guessed.
+     * @param secretKeyLength Length of the secret key.
+     * @return The correct guess for the secret key.
+     * @see SecretKeyGuesser#start(SecretKey, int, boolean)
+     */
+    public static String start(SecretKey secretKey, int secretKeyLength) {
+        return start(secretKey, secretKeyLength, true);
+    }
+
+
+    private static int nextCharHashOf(int charHash) {
+        return (charHash + 1) % CHAR.length;
     }
 }
