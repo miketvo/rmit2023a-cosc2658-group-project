@@ -4,9 +4,7 @@ import vn.rmit.cosc2658.development.SecretKey;
 
 
 public class SecretKeyGuesser {
-    private static final char[] CHAR = "RMIT".toCharArray();     // Possible characters in secret key
-    private static final int[] charFreq = new int[CHAR.length];  // Number of occurrences (frequency) for each possible character
-    private static int mostCommonCharHash = 0;                   // For optimization purposes. Initial assumption: R
+    private static final char[] CHAR = "RMIT".toCharArray(); // Possible characters in secret key
 
 
     /**
@@ -16,6 +14,10 @@ public class SecretKeyGuesser {
      * @return The correct guess for the secret key.
      */
     public static String start(SecretKey secretKey, int secretKeyLength, boolean verbose) {
+        final int[] charFreq = new int[CHAR.length];  // Number of occurrences (frequency) for each possible character
+        int mostCommonCharHash = 0;                   // For optimization purposes. Initial assumption: R
+
+
         /* **********************
 
         Initial Guesses
