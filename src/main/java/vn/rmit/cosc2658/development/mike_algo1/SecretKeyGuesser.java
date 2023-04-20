@@ -153,34 +153,66 @@ public class SecretKeyGuesser {
      * <p>Returns a sorted (descending) array of all possible characters by their frequencies.</p>
      *
      * <ul>
-     *     <li>Time complexity: O(n)</li>
+     *     <li>Time complexity: O(n log n)</li>
      *     <li>Space complexity: O(n)</li>
      * </ul>
      * @param freqs Frequency map for each possible character, where freqs[hash(c)] is the frequency for character c.
      * @see SecretKeyGuesser#hash(char)
      */
     protected static char[] rankCharByFrequency(int[] freqs) {
+        if (freqs == null) throw  new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!");
         if (CHAR.length != freqs.length) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Invalid frequency map size!");
 
-
-        // TODO: Implement a more efficient sorting algorithm
         char[] rankedChars = new char[CHAR.length];
         for (int i = 0; i < CHAR.length; i++) rankedChars[i] = CHAR[i];
+        mergeSort(rankedChars, freqs, 0, CHAR.length - 1);
 
-        boolean swapped;
-        int n = CHAR.length;
-        do {
-            swapped = false;
-            for (int i = 1; i < n; i++) {
-                if (freqs[hash(rankedChars[i - 1])] < freqs[hash(rankedChars[i])]) {
-                    char temp = rankedChars[i-1];
-                    rankedChars[i - 1] = rankedChars[i];
-                    rankedChars[i] = temp;
-                    swapped = true;
-                }
-            }
-            n--;
-        } while (swapped);
         return rankedChars;
+    }
+
+    private static void mergeSort(char[] rankedChars, int[] freqs, int start, int end) {
+        if (start < end) {
+            int middle = (start + end) / 2;
+            mergeSort(rankedChars, freqs, start, middle);
+            mergeSort(rankedChars, freqs, middle + 1, end);
+            merge(rankedChars, freqs, start, middle, end);
+        }
+    }
+
+    private static void merge(char[] rankedChars, int[] freqs, int start, int middle, int end) {
+        char[] left = new char[middle - start + 1];
+        for (int i = start, j = 0; i <= middle; i++, j++) {
+            left[j] = rankedChars[i];
+        }
+
+        char[] right = new char[end - middle];
+        for (int i = middle + 1, j = 0; i <= end; i++, j++) {
+            right[j] = rankedChars[i];
+        }
+
+        int leftIndex = 0, rightIndex = 0, index = start;
+
+        while (leftIndex < left.length && rightIndex < right.length) {
+            if (freqs[hash(left[leftIndex])] >= freqs[hash(right[rightIndex])]) {
+                rankedChars[index] = left[leftIndex];
+                leftIndex++;
+            } else {
+                rankedChars[index] = right[rightIndex];
+                rightIndex++;
+            }
+            index++;
+        }
+
+        while (leftIndex < left.length) {
+            rankedChars[index] = left[leftIndex];
+            leftIndex++;
+            index++;
+        }
+
+        while (rightIndex < right.length) {
+            rankedChars[index] = right[rightIndex];
+            rightIndex++;
+            index++;
+        }
     }
 }

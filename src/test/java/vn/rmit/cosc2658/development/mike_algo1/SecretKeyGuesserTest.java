@@ -21,10 +21,16 @@ class SecretKeyGuesserTest {
 
     @Test
     void rankCharByFrequency() {
+        assertEquals("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!", assertThrows(
+                IllegalArgumentException.class,
+                () -> SecretKeyGuesser.rankCharByFrequency(null)
+        ).getMessage());
+
         assertEquals("SecretKeyGuesser.rankCharByFrequency(int[]): Invalid frequency map size!", assertThrows(
                 IllegalArgumentException.class,
                 () -> SecretKeyGuesser.rankCharByFrequency(new int[] {0})
         ).getMessage());
+
         assertArrayEquals("MIRT".toCharArray(), SecretKeyGuesser.rankCharByFrequency(new int[] {42, 420, 69, 1}));
     }
 
