@@ -77,7 +77,7 @@ public class SecretKeyGuesser {
 
         switch (algorithm) {
             default -> {
-                if (Math.abs(distributionDeviation) < secretKeyLength / 3) {
+                if (Math.abs(distributionDeviation) <= secretKeyLength / 3) {
                     return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
                 } else {
                     return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
