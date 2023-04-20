@@ -5,22 +5,21 @@ import vn.rmit.cosc2658.development.SecretKey;
 
 public class SecretKeyGuesser {
     private static final char[] POSSIBLE_VALUES = "RMIT".toCharArray();
-    private static final int LENGTH = 16;
 
-    public static void start(SecretKey sk) {
-        int[] letterCount = new int[4];  // Count the number of occurrences for each character in the secret key
+    public static String start(SecretKey sk, int kLen, boolean verbose) {
+        int[] letterCount = new int[POSSIBLE_VALUES.length];  // Count the number of occurrences for each character in the secret key
 
-        letterCount[0] = sk.guess("RRRRRRRRRRRRRRRR");
-        if (letterCount[0] == 16) return;
+        letterCount[0] = sk.guess("R".repeat(kLen));
+        if (letterCount[0] == kLen) return "R".repeat(kLen);
 
-        letterCount[1] = sk.guess("MMMMMMMMMMMMMMMM");
-        if (letterCount[1] == 16) return;
+        letterCount[1] = sk.guess("M".repeat(kLen));
+        if (letterCount[1] == kLen) return "M".repeat(kLen);
 
-        letterCount[2] = sk.guess("IIIIIIIIIIIIIIII");
-        if (letterCount[2] == 16) return;
+        letterCount[2] = sk.guess("I".repeat(kLen));
+        if (letterCount[2] == kLen) return "I".repeat(kLen);
 
-        letterCount[3] = sk.guess("TTTTTTTTTTTTTTTT");
-        if (letterCount[3] == 16) return;
+        letterCount[3] = sk.guess("T".repeat(kLen));
+        if (letterCount[3] == kLen) return "T".repeat(kLen);
 
 
         // create a guess with exact number of each element in correct key
@@ -32,10 +31,16 @@ public class SecretKeyGuesser {
             }
         }
 
-        while (sk.guess(guess.toString()) != 16) {  // make guesses
-            guess = new StringBuilder(generateGuess(guess.toString(), sk));
-            System.out.println("Guessing... " + guess);
+        while (sk.guess(guess.toString()) != kLen) {  // make guesses
+            guess = new StringBuilder(generateGuess(guess.toString(), sk, kLen));
+            if (verbose) System.out.println("Guessing... " + guess);
         }
+
+        return guess.toString();
+    }
+
+    public static String start(SecretKey secretKey, int secretKeyLength) {
+        return start(secretKey, secretKeyLength, true);
     }
 
 
@@ -49,12 +54,12 @@ public class SecretKeyGuesser {
         };
     }
 
-    private static String generateGuess(String guess, SecretKey secretKey) {
+    private static String generateGuess(String guess, SecretKey secretKey, int keyLength) {
         char[] curr = guess.toCharArray();
         char[] test = curr.clone();
         int i = 0;
-        while (i < LENGTH) {
-            for (int j = 0; j < LENGTH; j++) {
+        while (i < keyLength) {
+            for (int j = 0; j < keyLength; j++) {
                 if (toInt(test[i]) != toInt(test[j])) {
                     // increase this one and stop
                     char temp = test[i];

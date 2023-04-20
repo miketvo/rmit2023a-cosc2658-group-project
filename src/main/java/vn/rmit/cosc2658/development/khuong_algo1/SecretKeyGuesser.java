@@ -35,34 +35,34 @@ public class SecretKeyGuesser {
         System.out.println("Secret key is: " + ans + " with " + times + " times guessed");
     }
 
-    public static String start(SecretKey secretKey){
+    public static String start(SecretKey secretKey, int secretKeyLength, boolean verbose){
         // initial phase
         charFreq.clear();
 
         // count char freq
-        charFreq.add(0, new Pair('R', secretKey.guess("R".repeat(16)))); // get R frequency
-        if (charFreq.get(0).getFreq() == 16) {
-            inform("R".repeat(16), secretKey.getGuessCount());
-            return "R".repeat(16);
+        charFreq.add(0, new Pair('R', secretKey.guess("R".repeat(secretKeyLength)))); // get R frequency
+        if (charFreq.get(0).getFreq() == secretKeyLength) {
+            if (verbose) inform("R".repeat(secretKeyLength), secretKey.getGuessCount());
+            return "R".repeat(secretKeyLength);
         }
 
-        charFreq.add(1, new Pair('M', secretKey.guess("M".repeat(16)))); // get M frequency
-        if (charFreq.get(1).getFreq() == 16) {
-            inform("M".repeat(16), secretKey.getGuessCount());
-            return "M".repeat(16);
+        charFreq.add(1, new Pair('M', secretKey.guess("M".repeat(secretKeyLength)))); // get M frequency
+        if (charFreq.get(1).getFreq() == secretKeyLength) {
+            if (verbose) inform("M".repeat(secretKeyLength), secretKey.getGuessCount());
+            return "M".repeat(secretKeyLength);
         }
 
-        charFreq.add(2, new Pair('I', secretKey.guess("I".repeat(16)))); // get I frequency
-        if (charFreq.get(2).getFreq() == 16) {
-            inform("I".repeat(16), secretKey.getGuessCount());
-            return "I".repeat(16);
+        charFreq.add(2, new Pair('I', secretKey.guess("I".repeat(secretKeyLength)))); // get I frequency
+        if (charFreq.get(2).getFreq() == secretKeyLength) {
+            if (verbose) inform("I".repeat(secretKeyLength), secretKey.getGuessCount());
+            return "I".repeat(secretKeyLength);
         }
 
         // get T frequency by subtracting the three above letters' frequency
-        charFreq.add(3, new Pair('T', 16 - charFreq.get(0).freq - charFreq.get(1).freq - charFreq.get(2).freq));
-        if (charFreq.get(3).getFreq() == 16) {
-            inform("T".repeat(16), secretKey.getGuessCount());
-            return "T".repeat(16);
+        charFreq.add(3, new Pair('T', secretKeyLength - charFreq.get(0).freq - charFreq.get(1).freq - charFreq.get(2).freq));
+        if (charFreq.get(3).getFreq() == secretKeyLength) {
+            if (verbose) inform("T".repeat(secretKeyLength), secretKey.getGuessCount());
+            return "T".repeat(secretKeyLength);
         }
 
         // sort frequency count table
@@ -71,9 +71,9 @@ public class SecretKeyGuesser {
         // processing
         char mostCommonChar = charFreq.get(0).getCh();
         char secondMostCommonChar = charFreq.get(1).getCh();
-        String temp = Character.toString(mostCommonChar).repeat(16);
+        String temp = Character.toString(mostCommonChar).repeat(secretKeyLength);
         StringBuilder ans = new StringBuilder();
-        for (int i = 0; i < 16; i++){
+        for (int i = 0; i < secretKeyLength; i++){
             char[] tempCharArray = temp.toCharArray();
             tempCharArray[i] = secondMostCommonChar;
             int num = secretKey.guess(String.valueOf(tempCharArray));
@@ -91,7 +91,11 @@ public class SecretKeyGuesser {
         }
 
         // return answer
-        inform(ans.toString(), secretKey.getGuessCount());
+        if (verbose) inform(ans.toString(), secretKey.getGuessCount());
         return ans.toString();
+    }
+
+    public static String start(SecretKey secretKey, int secretKeyLength) {
+        return start(secretKey, secretKeyLength, true);
     }
 }
