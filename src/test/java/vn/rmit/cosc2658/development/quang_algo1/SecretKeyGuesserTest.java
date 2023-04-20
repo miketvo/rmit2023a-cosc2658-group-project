@@ -17,6 +17,7 @@ class SecretKeyGuesserTest {
     private final SecretKey secretKey8 = new SecretKey("RRRRMMMMIIIITTTT");
     private final SecretKey secretKey9 = new SecretKey("TTTTIIIIMMMMRRRR");
     private final SecretKey secretKey10 = new SecretKey("RRRIIIIIRRRRRIIR");
+    private final SecretKey secretKey11 = new SecretKey("RRMMIITTTTIIMMRR");
 
 
     @Test
@@ -50,6 +51,9 @@ class SecretKeyGuesserTest {
 
         assertEquals(SecretKeyGuesser.start(secretKey10, 16), secretKey10.getKey());
         System.out.printf("\"%s\" took %d guesses.\n\n", secretKey10.getKey(), secretKey10.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey11, 16), secretKey11.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey11.getKey(), secretKey11.getGuessCount());
     }
 
     @Test
@@ -57,15 +61,31 @@ class SecretKeyGuesserTest {
         final int MAX_ITER = 100_000;
         final int KEY_LEN = 16;
 
+        String bestCase = "", worstCase = "";
+        long bestCount = 4_294_967_296L, worstCount = 0;
         int countSum = 0;
         for (int i = 0; i < MAX_ITER; i++) {
             SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
             assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, false), sk.getKey());
+
+            if (bestCount > sk.getGuessCount()) {
+                bestCount = sk.getGuessCount();
+                bestCase = sk.getKey();
+            }
+            if (worstCount < sk.getGuessCount()) {
+                worstCount = sk.getGuessCount();
+                worstCase = sk.getKey();
+            }
             countSum += sk.getGuessCount();
         }
+
         System.out.printf(
                 "Average number of guesses for key of length %d over %d iterations: %.2f\n",
                 KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
+        );
+        System.out.printf(
+                "Best case: \"%s\" (%d guesses)\nWorst case: \"%s\" (%d guesses)\n",
+                bestCase, bestCount, worstCase, worstCount
         );
     }
 
