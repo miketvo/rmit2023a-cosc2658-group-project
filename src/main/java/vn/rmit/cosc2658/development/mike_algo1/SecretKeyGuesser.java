@@ -132,6 +132,8 @@ public class SecretKeyGuesser {
     protected static char[] rankCharByFrequency(int[] freqs) {
         if (CHAR.length != freqs.length) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Invalid frequency map size!");
 
+
+        // TODO: Implement a more efficient sorting algorithm
         char[] rankedChars = new char[CHAR.length];
         for (int i = 0; i < CHAR.length; i++) rankedChars[i] = CHAR[i];
 
