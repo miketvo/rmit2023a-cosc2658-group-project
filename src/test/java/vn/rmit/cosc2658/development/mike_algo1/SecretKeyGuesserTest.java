@@ -20,6 +20,15 @@ class SecretKeyGuesserTest {
 
 
     @Test
+    void rankCharByFrequency() {
+        assertEquals("SecretKeyGuesser.rankCharByFrequency(int[]): Invalid frequency map size!", assertThrows(
+                IllegalArgumentException.class,
+                () -> SecretKeyGuesser.rankCharByFrequency(new int[] {0})
+        ).getMessage());
+        assertArrayEquals("MIRT".toCharArray(), SecretKeyGuesser.rankCharByFrequency(new int[] {42, 420, 69, 1}));
+    }
+
+    @Test
     void key16Test() {
         assertEquals(SecretKeyGuesser.start(secretKey1, 16), secretKey1.getKey());
         System.out.printf("\"%s\" took %d guesses.\n\n", secretKey1.getKey(), secretKey1.getGuessCount());
