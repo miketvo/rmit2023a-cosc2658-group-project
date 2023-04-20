@@ -64,68 +64,70 @@ public class SecretKeyGuesser {
         Start with a baseline guess which is a string filled with the most common character (the one with the highest
         frequency). Then go through all other possible characters in order from most common to least common and check
         whether it can be used to replace any of the characters in the baseline guess until it has correctly guessed all
-        positions in the secret key except for the last incorrect one. This last incorrect one is simply the character
-        with the smallest remaining non-zero frequency.
+        positions in the secret key except for the last incorrect one. This last incorrect one is simply the remaining
+        unused character.
 
         This will save us more SecretKey.guess() calls, because our we would not have to call SecretKey.guess() for:
             1. Characters that we know are not in the key (frequency equal to 0 after the above steps);
-            2. Multiple incorrect guesses on the same index.
+            2. Multiple unnecessary incorrect guesses on the same index;
             3. The last incorrect character position.
 
         ************************************************************************************************************* */
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
 
-        int mostCommonCharHash = hash(charCommonalityRank[0]);
-        char[] guess = Character.toString(charCommonalityRank[0]).repeat(secretKeyLength).toCharArray();
-        int cumulativeMatchCount = charFreq[mostCommonCharHash];
-        boolean[] correct = new boolean[secretKeyLength];
-        int correctCount = 0;
+        char mostCommonChar = charCommonalityRank[0];
+        char leastCommonChar = charCommonalityRank[CHAR.length - 1];
+        char[] baselineGuess = Character.toString(mostCommonChar).repeat(secretKeyLength).toCharArray();
+        char[] correctKey = new char[secretKeyLength];
 
-        for (int nextCommonCharIndex = 1; nextCommonCharIndex < charCommonalityRank.length; nextCommonCharIndex++) {
-            int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
-            for (int charPos = 0; correctCount < secretKeyLength - 1 && charFreq[nextCommonCharHash] > 0 && charPos < secretKeyLength; charPos++) {
-                if (correct[charPos]) continue;
+        int[] charFreqPool = new int[CHAR.length];
+        for (int i = 0; i < CHAR.length; i++) charFreqPool[i] = charFreq[i];
 
+        for (int charPos = 0; charPos < secretKeyLength - 1; charPos++) {
+            boolean foundCorrect = false;
+            for (int nextCommonCharIndex = 1; nextCommonCharIndex < CHAR.length - 1; nextCommonCharIndex++) {
+                int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
+                if (charFreq[nextCommonCharHash] == 0) continue;
 
-                char originalChar = guess[charPos];
-                guess[charPos] = CHAR[nextCommonCharHash];
-                int newMatchCount = secretKey.guess(String.valueOf(guess));
-                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), cumulativeMatchCount);
+                baselineGuess[charPos] = CHAR[nextCommonCharHash];
+                int newMatchCount = secretKey.guess(String.valueOf(baselineGuess));
+                baselineGuess[charPos] = mostCommonChar;
+                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(baselineGuess), newMatchCount);
 
-                switch (newMatchCount - cumulativeMatchCount) {
-                    case 1 -> {  // New replacement character is the correct for this position
-                        correct[charPos] = true;
-                        correctCount++;
-                        charFreq[nextCommonCharHash]--;
-                        cumulativeMatchCount = newMatchCount;
-                    }
-                    case -1 -> {  // Original baseline guess is correct for this position
-                        correct[charPos] = true;
-                        correctCount++;
-                        guess[charPos] = originalChar;
-                    }
+                if (newMatchCount < charFreq[hash(mostCommonChar)]) {  // Original baseline guess character is correct for this position
+                    correctKey[charPos] = mostCommonChar;
+                    foundCorrect = true;
+                    charFreqPool[hash(mostCommonChar)]--;
+                    break;
+                }
+
+                if (newMatchCount > charFreq[hash(mostCommonChar)]) {  // New replacement character is correct for this position
+                    correctKey[charPos] = CHAR[nextCommonCharHash];
+                    foundCorrect = true;
+                    charFreqPool[nextCommonCharHash]--;
+                    break;
                 }
             }
-        }
 
-        int lastIncorrectPos = -1;
-        for (int pos = 0; lastIncorrectPos < 0 && pos < secretKeyLength; pos++) {
-            if (!correct[pos]) lastIncorrectPos = pos;
+            if (!foundCorrect) {  // Least common character is correct for this position
+                correctKey[charPos] = leastCommonChar;
+                charFreqPool[hash(leastCommonChar)]--;
+            }
         }
 
         char lastChar = CHAR[0];
         for (int rank = CHAR.length - 1; rank >= 0; rank--) {
-            if (charFreq[hash(charCommonalityRank[rank])] > 0) {
+            if (charFreqPool[hash(charCommonalityRank[rank])] > 0) {
                 lastChar = charCommonalityRank[rank];
                 break;
             }
         }
 
-        guess[lastIncorrectPos] = lastChar;
+        correctKey[secretKeyLength - 1] = lastChar;
 
 
-        if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
-        return String.valueOf(guess);
+        if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(correctKey));
+        return String.valueOf(correctKey);
     }
 
     /**
