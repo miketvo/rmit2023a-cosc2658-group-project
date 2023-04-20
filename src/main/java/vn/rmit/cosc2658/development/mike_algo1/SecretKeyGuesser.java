@@ -253,7 +253,7 @@ public class SecretKeyGuesser {
         boolean[] correct = new boolean[secretKeyLength];
         int correctCount = 0;
 
-        for (int nextCommonCharIndex = 1; nextCommonCharIndex < charCommonalityRank.length; nextCommonCharIndex++) {
+        for (int nextCommonCharIndex = 1; nextCommonCharIndex < CHAR.length; nextCommonCharIndex++) {
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
             for (int charPos = 0; correctCount < secretKeyLength - 1 && charFreq[nextCommonCharHash] > 0 && charPos < secretKeyLength; charPos++) {
                 if (correct[charPos]) continue;
