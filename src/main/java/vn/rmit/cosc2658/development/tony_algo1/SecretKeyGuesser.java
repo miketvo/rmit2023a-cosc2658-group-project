@@ -1,6 +1,7 @@
-package vn.rmit.cosc2658.tony_algo1;
+package vn.rmit.cosc2658.development.tony_algo1;
 
-import vn.rmit.cosc2658.SecretKey;
+import vn.rmit.cosc2658.development.SecretKey;
+
 
 public class SecretKeyGuesser {
     private static final int CHAR_COUNT = 3;

@@ -1,6 +1,6 @@
-package vn.rmit.cosc2658.baseline;
+package vn.rmit.cosc2658.development.baseline;
 
-import vn.rmit.cosc2658.SecretKey;
+import vn.rmit.cosc2658.development.SecretKey;
 
 
 public class SecretKeyGuesser {
