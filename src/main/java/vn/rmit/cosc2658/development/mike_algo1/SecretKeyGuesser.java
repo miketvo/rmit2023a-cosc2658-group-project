@@ -61,22 +61,27 @@ public class SecretKeyGuesser {
         =============
 
         Based on characters distribution, choose one of the following algorithm to minimize number of guesses:
-            1. Linear Character Swap - Depth First: Efficient for TODO: Insert case here
-            2. Linear Character Swap - Breadth First: Efficient for TODO: Insert case here
+            1. Linear Character Swap - Depth First: Efficient for roughly equal distribution
+            2. Linear Character Swap - Breadth First: Efficient for skewed distribution
 
         ************************************************************************************************************* */
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
         int distributionDeviation = 0;
         for (int rank = 1; rank < CHAR.length; rank++) {
             if (charFreq[hash(charCommonalityRank[rank])] == 0) break;
-            distributionDeviation = charFreq[hash(charCommonalityRank[rank - 1])] - charFreq[hash(charCommonalityRank[rank])];
+            distributionDeviation = Math.max(
+                    distributionDeviation,
+                    charFreq[hash(charCommonalityRank[rank - 1])] - charFreq[hash(charCommonalityRank[rank])]
+            );
         }
 
-        // TODO: Research optimal use cases for each algorithm
         switch (algorithm) {
             default -> {
-                return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
-                // return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
+                if (Math.abs(distributionDeviation) < secretKeyLength / 3) {
+                    return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
+                } else {
+                    return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
+                }
             }
 
             case DepthFirst -> {

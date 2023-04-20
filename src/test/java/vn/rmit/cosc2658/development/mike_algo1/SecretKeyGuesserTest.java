@@ -35,44 +35,118 @@ class SecretKeyGuesserTest {
         assertArrayEquals("MIRT".toCharArray(), SecretKeyGuesser.rankCharByFrequency(new int[] {42, 420, 69, 1}));
     }
 
+
     @Test
-    void key16Test() {
-        assertEquals(SecretKeyGuesser.start(secretKey1, 16, SecretKeyGuesser.Algorithm.Auto), secretKey1.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey1.getKey(), secretKey1.getGuessCount());
+    void key16TestAlgoAuto() {
+        assertEquals(SecretKeyGuesser.start(secretKey1, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey1.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey1.getKey(), secretKey1.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey2, 16, SecretKeyGuesser.Algorithm.Auto), secretKey2.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey2.getKey(), secretKey2.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey2, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey2.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey2.getKey(), secretKey2.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey3, 16, SecretKeyGuesser.Algorithm.Auto), secretKey3.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey3.getKey(), secretKey3.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey3, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey3.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey3.getKey(), secretKey3.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey4, 16, SecretKeyGuesser.Algorithm.Auto), secretKey4.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey4.getKey(), secretKey4.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey4, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey4.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey4.getKey(), secretKey4.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey5, 16, SecretKeyGuesser.Algorithm.Auto), secretKey5.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey5.getKey(), secretKey5.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey5, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey5.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey5.getKey(), secretKey5.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey6, 16, SecretKeyGuesser.Algorithm.Auto), secretKey6.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey6.getKey(), secretKey6.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey6, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey6.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey6.getKey(), secretKey6.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey7, 16, SecretKeyGuesser.Algorithm.Auto), secretKey7.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey7.getKey(), secretKey7.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey7, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey7.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey7.getKey(), secretKey7.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey8, 16, SecretKeyGuesser.Algorithm.Auto), secretKey8.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey8.getKey(), secretKey8.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey8, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey8.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey8.getKey(), secretKey8.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey9, 16, SecretKeyGuesser.Algorithm.Auto), secretKey9.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey9.getKey(), secretKey9.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey9, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey9.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey9.getKey(), secretKey9.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey10, 16, SecretKeyGuesser.Algorithm.Auto), secretKey10.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey10.getKey(), secretKey10.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey10, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey10.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey10.getKey(), secretKey10.getGuessCount());
 
-        assertEquals(SecretKeyGuesser.start(secretKey11, 16, SecretKeyGuesser.Algorithm.Auto), secretKey11.getKey());
-        System.out.printf("\"%s\" took %d guesses.\n\n", secretKey11.getKey(), secretKey11.getGuessCount());
+        assertEquals(SecretKeyGuesser.start(secretKey11, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey11.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey11.getKey(), secretKey11.getGuessCount());
     }
 
     @Test
-    void randomKey16Test() {
+    void key16TestAlgoDepthFirst() {
+        assertEquals(SecretKeyGuesser.start(secretKey1, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey1.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey1.getKey(), secretKey1.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey2, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey2.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey2.getKey(), secretKey2.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey3, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey3.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey3.getKey(), secretKey3.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey4, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey4.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey4.getKey(), secretKey4.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey5, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey5.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey5.getKey(), secretKey5.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey6, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey6.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey6.getKey(), secretKey6.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey7, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey7.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey7.getKey(), secretKey7.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey8, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey8.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey8.getKey(), secretKey8.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey9, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey9.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey9.getKey(), secretKey9.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey10, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey10.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey10.getKey(), secretKey10.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey11, 16, SecretKeyGuesser.Algorithm.DepthFirst, false), secretKey11.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey11.getKey(), secretKey11.getGuessCount());
+    }
+
+    @Test
+    void key16TestAlgoBreadthFirst() {
+        assertEquals(SecretKeyGuesser.start(secretKey1, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey1.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey1.getKey(), secretKey1.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey2, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey2.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey2.getKey(), secretKey2.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey3, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey3.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey3.getKey(), secretKey3.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey4, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey4.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey4.getKey(), secretKey4.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey5, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey5.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey5.getKey(), secretKey5.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey6, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey6.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey6.getKey(), secretKey6.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey7, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey7.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey7.getKey(), secretKey7.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey8, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey8.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey8.getKey(), secretKey8.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey9, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey9.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey9.getKey(), secretKey9.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey10, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey10.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey10.getKey(), secretKey10.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey11, 16, SecretKeyGuesser.Algorithm.BreadthFirst, false), secretKey11.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey11.getKey(), secretKey11.getGuessCount());
+    }
+
+
+    @Test
+    void randomKey16TestAuto() {
         final int MAX_ITER = 100_000;
         final int KEY_LEN = 16;
 
@@ -103,6 +177,73 @@ class SecretKeyGuesserTest {
                 bestCase, bestCount, worstCase, worstCount
         );
     }
+
+    @Test
+    void randomKey16TestDepthFirst() {
+        final int MAX_ITER = 100_000;
+        final int KEY_LEN = 16;
+
+        String bestCase = "", worstCase = "";
+        long bestCount = 4_294_967_296L, worstCount = 0;
+        int countSum = 0;
+        for (int i = 0; i < MAX_ITER; i++) {
+            SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
+            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.DepthFirst,false), sk.getKey());
+
+            if (bestCount > sk.getGuessCount()) {
+                bestCount = sk.getGuessCount();
+                bestCase = sk.getKey();
+            }
+            if (worstCount < sk.getGuessCount()) {
+                worstCount = sk.getGuessCount();
+                worstCase = sk.getKey();
+            }
+            countSum += sk.getGuessCount();
+        }
+
+        System.out.printf(
+                "Average number of guesses for key of length %d over %d iterations: %.2f\n",
+                KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
+        );
+        System.out.printf(
+                "Best case: \"%s\" (%d guesses)\nWorst case: \"%s\" (%d guesses)\n",
+                bestCase, bestCount, worstCase, worstCount
+        );
+    }
+
+    @Test
+    void randomKey16TestBreadFirst() {
+        final int MAX_ITER = 100_000;
+        final int KEY_LEN = 16;
+
+        String bestCase = "", worstCase = "";
+        long bestCount = 4_294_967_296L, worstCount = 0;
+        int countSum = 0;
+        for (int i = 0; i < MAX_ITER; i++) {
+            SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
+            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.BreadthFirst,false), sk.getKey());
+
+            if (bestCount > sk.getGuessCount()) {
+                bestCount = sk.getGuessCount();
+                bestCase = sk.getKey();
+            }
+            if (worstCount < sk.getGuessCount()) {
+                worstCount = sk.getGuessCount();
+                worstCase = sk.getKey();
+            }
+            countSum += sk.getGuessCount();
+        }
+
+        System.out.printf(
+                "Average number of guesses for key of length %d over %d iterations: %.2f\n",
+                KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
+        );
+        System.out.printf(
+                "Best case: \"%s\" (%d guesses)\nWorst case: \"%s\" (%d guesses)\n",
+                bestCase, bestCount, worstCase, worstCount
+        );
+    }
+
 
     @Test
     void randomKeyVariableLengthTest() {
