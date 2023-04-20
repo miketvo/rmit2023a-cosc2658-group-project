@@ -1,9 +1,8 @@
-package vn.rmit.cosc2658.tony_algo1;
+package vn.rmit.cosc2658.development.tony_algo1;
 
 import org.junit.jupiter.api.Test;
-import vn.rmit.cosc2658.SecretKey;
+import vn.rmit.cosc2658.development.SecretKey;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class SecretKeyGuesserTest {
 
