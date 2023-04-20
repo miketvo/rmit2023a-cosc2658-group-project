@@ -31,8 +31,8 @@ public class SecretKeyGuesser {
         - Space complexity: O(1)
 
         ********************** */
-        int totalCharFreqRMI = 0;  // The sum of charFreq of R, M, and I
-        for (int charHash = 0; totalCharFreqRMI < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
+        int totalCharFreq = 0;  // The sum of charFreq of R, M, and I
+        for (int charHash = 0; totalCharFreq < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
             String guess = Character.toString(CHAR[charHash]).repeat(secretKeyLength);
 
             int matchCount = secretKey.guess(guess);
@@ -43,16 +43,19 @@ public class SecretKeyGuesser {
             }
 
             charFreq[charHash] = matchCount;
-            totalCharFreqRMI += matchCount;
+            totalCharFreq += matchCount;
         }
 
-        if (totalCharFreqRMI == 0) {
+        if (totalCharFreq == 0) {
             String guess = "T".repeat(secretKeyLength);
             if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
             return guess;
         }
 
-        if (totalCharFreqRMI < secretKeyLength) charFreq[CHAR.length - 1] = secretKeyLength - totalCharFreqRMI;
+        if (totalCharFreq < secretKeyLength) {
+            charFreq[CHAR.length - 1] = secretKeyLength - totalCharFreq;
+            totalCharFreq += charFreq[CHAR.length - 1];
+        }
 
 
         /* *************************************************************************************************************
@@ -77,7 +80,7 @@ public class SecretKeyGuesser {
 
         switch (algorithm) {
             default -> {
-                if (Math.abs(distributionDeviation) <= secretKeyLength / 3) {
+                if (Math.abs(distributionDeviation) <= totalCharFreq / 4) {
                     return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
                 } else {
                     return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
