@@ -243,7 +243,7 @@ public class SecretKeyGuesser {
                 if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), cumulativeMatchCount);
 
                 switch (newMatchCount - cumulativeMatchCount) {
-                    case 1 -> {  // New replacement character is the correct for this position
+                    case 1 -> {  // New replacement character is correct for this position
                         correct[charPos] = true;
                         correctCount++;
                         charFreq[nextCommonCharHash]--;
