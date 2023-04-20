@@ -4,6 +4,8 @@ import vn.rmit.cosc2658.development.SecretKey;
 
 
 public class SecretKeyGuesser {
+    enum Algorithm { Auto, DepthFirst, BreadthFirst }
+
     private static final char[] CHAR = "RMIT".toCharArray(); // Possible characters in secret key
 
 
@@ -17,7 +19,7 @@ public class SecretKeyGuesser {
      * @param verbose Switch for verbose output. Defaults to <strong>{@code false}</strong>.
      * @return The correct guess for the secret key.
      */
-    public static String start(SecretKey secretKey, int secretKeyLength, boolean verbose) {
+    public static String start(SecretKey secretKey, int secretKeyLength, Algorithm algorithm, boolean verbose) {
         final int[] charFreq = new int[CHAR.length];  // Number of occurrences (frequency) for each possible character
 
         /* **********************
@@ -71,18 +73,30 @@ public class SecretKeyGuesser {
         }
 
         // TODO: Research optimal use cases for each algorithm
-        return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
-        // return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
+        switch (algorithm) {
+            default -> {
+                return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
+                // return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
+            }
+
+            case DepthFirst -> {
+                return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
+            }
+
+            case BreadthFirst -> {
+                return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
+            }
+        }
     }
 
     /**
      * @param secretKey The secret key to be guessed.
      * @param secretKeyLength Length of the secret key.
      * @return The correct guess for the secret key.
-     * @see SecretKeyGuesser#start(SecretKey, int, boolean)
+     * @see SecretKeyGuesser#start(SecretKey, int, Algorithm, boolean)
      */
-    public static String start(SecretKey secretKey, int secretKeyLength) {
-        return start(secretKey, secretKeyLength, true);
+    public static String start(SecretKey secretKey, int secretKeyLength, Algorithm algorithm) {
+        return start(secretKey, secretKeyLength, algorithm, true);
     }
 
 
