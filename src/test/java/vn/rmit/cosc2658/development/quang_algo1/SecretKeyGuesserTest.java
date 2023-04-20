@@ -1,7 +1,7 @@
-package vn.rmit.cosc2658.quang_algo1;
+package vn.rmit.cosc2658.development.quang_algo1;
 
 import org.junit.jupiter.api.Test;
-import vn.rmit.cosc2658.SecretKey;
+import vn.rmit.cosc2658.development.SecretKey;
 
 
 class SecretKeyGuesserTest {
