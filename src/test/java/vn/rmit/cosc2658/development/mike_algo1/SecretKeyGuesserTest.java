@@ -72,7 +72,7 @@ class SecretKeyGuesserTest {
     }
 
     @Test
-    void randomKey16AverageResultTest() {
+    void randomKey16Test() {
         final int MAX_ITER = 100_000;
         final int KEY_LEN = 16;
 
