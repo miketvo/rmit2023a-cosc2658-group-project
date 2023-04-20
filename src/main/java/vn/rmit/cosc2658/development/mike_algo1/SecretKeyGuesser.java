@@ -8,6 +8,10 @@ public class SecretKeyGuesser {
 
 
     /**
+     * <ul>
+     *     <li>Time complexity: O(n)</li>
+     *     <li>Space complexity: O(n)</li>
+     * </ul>
      * @param secretKey The secret key to be guessed.
      * @param secretKeyLength Length of the secret key.
      * @param verbose Switch for verbose output. Defaults to <strong>{@code false}</strong>.
@@ -146,8 +150,13 @@ public class SecretKeyGuesser {
     }
 
     /**
-     * Returns a sorted (descending) array of all possible characters by their frequencies.
-     * @param freqs Frequency map for each possible character, where freqs[hash(c)] is the frequency for character c;
+     * <p>Returns a sorted (descending) array of all possible characters by their frequencies.</p>
+     *
+     * <ul>
+     *     <li>Time complexity: O(n)</li>
+     *     <li>Space complexity: O(n)</li>
+     * </ul>
+     * @param freqs Frequency map for each possible character, where freqs[hash(c)] is the frequency for character c.
      * @see SecretKeyGuesser#hash(char)
      */
     protected static char[] rankCharByFrequency(int[] freqs) {
