@@ -35,8 +35,10 @@ public class SecretKeyGuesser {
         System.out.println("Secret key is: " + ans + " with " + times + " times guessed");
     }
 
-    private static String generateGuessedKey(SecretKey secretKey){
+    public static String start(SecretKey secretKey){
         // initial phase
+        charFreq.clear();
+
         // count char freq
         charFreq.add(0, new Pair('R', secretKey.guess("R".repeat(16)))); // get R frequency
         if (charFreq.get(0).getFreq() == 16) {
@@ -94,7 +96,7 @@ public class SecretKeyGuesser {
     }
 
     public static void main(String[] args) {
-        vn.rmit.cosc2658.development.SecretKey key = new vn.rmit.cosc2658.development.SecretKey("RRRIIIIIRRRRRIIR");
-        String ans = generateGuessedKey(key);
+        vn.rmit.cosc2658.development.SecretKey key = new vn.rmit.cosc2658.development.SecretKey("RMITRMITRMITRMIT");
+        String ans = start(key);
     }
 }
