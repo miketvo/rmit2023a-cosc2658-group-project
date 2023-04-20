@@ -62,15 +62,20 @@ public class SecretKeyGuesser {
         - Space complexity: O(n)
 
         Start with a baseline guess which is a string filled with the most common character (the one with the highest
-        frequency). Then go through all other possible characters in order from most common to least common and check
-        whether it can be used to replace any of the characters in the baseline guess until it has correctly guessed all
-        positions in the secret key except for the last incorrect one. This last incorrect one is simply the remaining
-        unused character.
+        frequency). Then proceed to guess each character in the secret key one at a time, using the results of the
+        previous guesses to adjust the next guess:
+            1. Replace the character in the current position with the next most common character that hasn't been ruled
+            out and checks how many characters match the secret key. If the number of matching characters is less than
+            the most common character, assume that character is correct.
+            2. If the number of matching characters is greater than the most common character, the algorithm assumes the
+            next most common character is correct.
+            3. If neither condition is met, the algorithm assumes the least common character is correct.
 
         This will save us more SecretKey.guess() calls, because our we would not have to call SecretKey.guess() for:
-            1. Characters that we know are not in the key (frequency equal to 0 after the above steps);
-            2. Multiple unnecessary incorrect guesses on the same index;
-            3. The last incorrect character position.
+            - Characters that we know are not in the key (frequency equal to 0 after the above steps);
+            - Low probability guesses on the same index;
+            - All guesses for the least common character;
+            - The last secret key character position.
 
         ************************************************************************************************************* */
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
@@ -94,14 +99,14 @@ public class SecretKeyGuesser {
                 baselineGuess[charPos] = mostCommonChar;
                 if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(baselineGuess), newMatchCount);
 
-                if (newMatchCount < charFreq[hash(mostCommonChar)]) {  // Original baseline guess character is correct for this position
+                if (newMatchCount < charFreq[hash(mostCommonChar)]) {  // Most common character is correct for this position
                     correctKey[charPos] = mostCommonChar;
                     foundCorrect = true;
                     charFreqPool[hash(mostCommonChar)]--;
                     break;
                 }
 
-                if (newMatchCount > charFreq[hash(mostCommonChar)]) {  // New replacement character is correct for this position
+                if (newMatchCount > charFreq[hash(mostCommonChar)]) {  // Next most common character is correct for this position
                     correctKey[charPos] = CHAR[nextCommonCharHash];
                     foundCorrect = true;
                     charFreqPool[nextCommonCharHash]--;
