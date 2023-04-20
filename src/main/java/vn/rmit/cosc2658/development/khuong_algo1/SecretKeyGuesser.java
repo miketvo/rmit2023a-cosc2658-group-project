@@ -94,9 +94,4 @@ public class SecretKeyGuesser {
         inform(ans.toString(), secretKey.getGuessCount());
         return ans.toString();
     }
-
-    public static void main(String[] args) {
-        vn.rmit.cosc2658.development.SecretKey key = new vn.rmit.cosc2658.development.SecretKey("RMITRMITRMITRMIT");
-        String ans = start(key);
-    }
 }
