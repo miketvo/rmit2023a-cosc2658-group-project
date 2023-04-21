@@ -31,7 +31,7 @@ public class SecretKeyGuesser {
         - Space complexity: O(1)
 
         ********************** */
-        int totalCharFreq = 0;  // The sum of charFreq of R, M, and I
+        int totalCharFreq = 0;  // The sum of charFreq of R, M, I, and T
         for (int charHash = 0; totalCharFreq < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
             String guess = Character.toString(CHAR[charHash]).repeat(secretKeyLength);
 
@@ -69,18 +69,18 @@ public class SecretKeyGuesser {
 
         ************************************************************************************************************* */
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
-        int distributionDeviation = 0;
-        for (int rank = 1; rank < CHAR.length; rank++) {
-            if (charFreq[hash(charCommonalityRank[rank])] == 0) break;
-            distributionDeviation = Math.max(
-                    distributionDeviation,
-                    charFreq[hash(charCommonalityRank[rank - 1])] - charFreq[hash(charCommonalityRank[rank])]
-            );
-        }
-
         switch (algorithm) {
             default -> {
-                if (Math.abs(distributionDeviation) <= totalCharFreq / 4) {
+                int distributionDeviation = 0;
+                for (int rank = 1; rank < CHAR.length; rank++) {
+                    if (charFreq[hash(charCommonalityRank[rank])] == 0) break;
+                    distributionDeviation = Math.max(
+                            distributionDeviation,
+                            Math.abs(charFreq[hash(charCommonalityRank[rank - 1])] - charFreq[hash(charCommonalityRank[rank])])
+                    );
+                }
+
+                if (distributionDeviation <= totalCharFreq / 4) {
                     return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
                 } else {
                     return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
@@ -236,6 +236,7 @@ public class SecretKeyGuesser {
      * <ul>
      *     <li>Characters that we know are not in the key (frequency equal to 0 after the above steps);</li>
      *     <li>Low probability guesses on the same index;</li>
+     *     <li>Unnecessary guesses for the least common character;</li>
      *     <li>The last secret key character position.</li>
      * </ul>
      * @param secretKey The secret key to be guessed.
@@ -248,6 +249,15 @@ public class SecretKeyGuesser {
      */
     private static String linearCharacterSwapBreadthFirst(SecretKey secretKey, int secretKeyLength, int[] charFreq, char[] charCommonalityRank, boolean verbose) {
         int mostCommonCharHash = hash(charCommonalityRank[0]);
+        int leastCommonCharHash = 0;
+        for (int charHash = CHAR.length - 1; charHash > 0; charHash--) {
+            if (charFreq[charHash] > 0) {
+                leastCommonCharHash = charHash;
+                break;
+            }
+        }
+        int totalCharFreq = secretKeyLength;
+
         char[] guess = Character.toString(charCommonalityRank[0]).repeat(secretKeyLength).toCharArray();
         int cumulativeMatchCount = charFreq[mostCommonCharHash];
         boolean[] correct = new boolean[secretKeyLength];
@@ -255,27 +265,38 @@ public class SecretKeyGuesser {
 
         for (int nextCommonCharIndex = 1; nextCommonCharIndex < CHAR.length; nextCommonCharIndex++) {
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
-            for (int charPos = 0; correctCount < secretKeyLength - 1 && charFreq[nextCommonCharHash] > 0 && charPos < secretKeyLength; charPos++) {
-                if (correct[charPos]) continue;
+            for (int i = 0; correctCount < secretKeyLength - 1 && charFreq[nextCommonCharHash] > 0 && i < secretKeyLength; i++) {
+                if (correct[i]) continue;
 
 
-                char originalChar = guess[charPos];
-                guess[charPos] = CHAR[nextCommonCharHash];
+                guess[i] = CHAR[nextCommonCharHash];
                 int newMatchCount = secretKey.guess(String.valueOf(guess));
                 if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), cumulativeMatchCount);
 
                 switch (newMatchCount - cumulativeMatchCount) {
                     case 1 -> {  // New replacement character is correct for this position
-                        correct[charPos] = true;
-                        correctCount++;
+                        correct[i] = true;
                         charFreq[nextCommonCharHash]--;
+                        totalCharFreq--;
+                        correctCount++;
                         cumulativeMatchCount = newMatchCount;
                     }
-                    case -1 -> {  // Original baseline guess is correct for this position
-                        correct[charPos] = true;
+                    case -1 -> {  // Original baseline most common character guess is correct for this position
+                        correct[i] = true;
+                        charFreq[mostCommonCharHash]--;
+                        totalCharFreq--;
                         correctCount++;
-                        guess[charPos] = originalChar;
+                        guess[i] = CHAR[mostCommonCharHash];
                     }
+                }
+
+                if (totalCharFreq == charFreq[leastCommonCharHash]) {  // Only least common character left. No need to guess anymore.
+                    for (int j = 0; j < secretKeyLength; j++) {
+                        if (!correct[j]) guess[j] = CHAR[leastCommonCharHash];
+                    }
+
+                    if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
+                    return String.valueOf(guess);
                 }
             }
         }
