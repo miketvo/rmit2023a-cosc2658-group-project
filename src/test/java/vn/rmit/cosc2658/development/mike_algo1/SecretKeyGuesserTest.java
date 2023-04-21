@@ -3,6 +3,8 @@ package vn.rmit.cosc2658.development.mike_algo1;
 import org.junit.jupiter.api.Test;
 import vn.rmit.cosc2658.development.SecretKey;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class SecretKeyGuesserTest {
+    private final String OUTPUT_DIR = "testData/mikeAlgo1/";
     private final SecretKey secretKey1 = new SecretKey("RRRRRRRRRMITRMIT");
     private final SecretKey secretKey2 = new SecretKey("RRRRRRRRRRRRRRRR");
     private final SecretKey secretKey3 = new SecretKey("MMMMMMMMMMMMMMMM");
@@ -149,102 +152,132 @@ class SecretKeyGuesserTest {
 
 
     @Test
-    void randomKey16TestAuto() {
-        final int MAX_ITER = 100_000;
-        final int KEY_LEN = 16;
+    void randomKey16TestAuto() throws IOException {
+        try {
+            FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKey16TestAuto.csv");
+            outFile.write("Iteration,SecretKey,MaxCharFreqDeviation,GuessCount\n");
 
-        String bestCase = "", worstCase = "";
-        long bestCount = 4_294_967_296L, worstCount = 0;
-        int countSum = 0;
-        for (int i = 0; i < MAX_ITER; i++) {
-            SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
-            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.Auto,false), sk.getKey());
+            final int MAX_ITER = 100_000;
+            final int KEY_LEN = 16;
 
-            if (bestCount > sk.getGuessCount()) {
-                bestCount = sk.getGuessCount();
-                bestCase = sk.getKey();
+            String bestCase = "", worstCase = "";
+            long bestCount = 4_294_967_296L, worstCount = 0;
+            int countSum = 0;
+            for (int i = 0; i < MAX_ITER; i++) {
+                SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
+                assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.Auto, false), sk.getKey());
+                outFile.write(String.format("%d,%s,%d,%d\n", i, sk.getKey(), getCharacterFrequencyMaxDeviation(sk.getKey()), sk.getGuessCount()));
+
+                if (bestCount > sk.getGuessCount()) {
+                    bestCount = sk.getGuessCount();
+                    bestCase = sk.getKey();
+                }
+                if (worstCount < sk.getGuessCount()) {
+                    worstCount = sk.getGuessCount();
+                    worstCase = sk.getKey();
+                }
+                countSum += sk.getGuessCount();
             }
-            if (worstCount < sk.getGuessCount()) {
-                worstCount = sk.getGuessCount();
-                worstCase = sk.getKey();
-            }
-            countSum += sk.getGuessCount();
+
+            System.out.printf(
+                    "Average number of guesses for key of length %d over %d iterations: %.2f\n",
+                    KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
+            );
+            System.out.printf(
+                    "Best case: \"%s\" (%d guesses)\nWorst case: \"%s\" (%d guesses)\n",
+                    bestCase, bestCount, worstCase, worstCount
+            );
+
+            outFile.close();
+        } catch (IOException e) {
+            fail(e);
         }
-
-        System.out.printf(
-                "Average number of guesses for key of length %d over %d iterations: %.2f\n",
-                KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
-        );
-        System.out.printf(
-                "Best case: \"%s\" (%d guesses)\nWorst case: \"%s\" (%d guesses)\n",
-                bestCase, bestCount, worstCase, worstCount
-        );
     }
 
     @Test
     void randomKey16TestDepthFirst() {
-        final int MAX_ITER = 100_000;
-        final int KEY_LEN = 16;
+        try {
+            FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKey16TestDepthFirst.csv");
+            outFile.write("Iteration,SecretKey,MaxCharFreqDeviation,GuessCount\n");
 
-        String bestCase = "", worstCase = "";
-        long bestCount = 4_294_967_296L, worstCount = 0;
-        int countSum = 0;
-        for (int i = 0; i < MAX_ITER; i++) {
-            SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
-            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.DepthFirst,false), sk.getKey());
+            final int MAX_ITER = 100_000;
+            final int KEY_LEN = 16;
 
-            if (bestCount > sk.getGuessCount()) {
-                bestCount = sk.getGuessCount();
-                bestCase = sk.getKey();
+            String bestCase = "", worstCase = "";
+            long bestCount = 4_294_967_296L, worstCount = 0;
+            int countSum = 0;
+            for (int i = 0; i < MAX_ITER; i++) {
+                SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
+                assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.DepthFirst,false), sk.getKey());
+                outFile.write(String.format("%d,%s,%d,%d\n", i, sk.getKey(), getCharacterFrequencyMaxDeviation(sk.getKey()), sk.getGuessCount()));
+
+                if (bestCount > sk.getGuessCount()) {
+                    bestCount = sk.getGuessCount();
+                    bestCase = sk.getKey();
+                }
+                if (worstCount < sk.getGuessCount()) {
+                    worstCount = sk.getGuessCount();
+                    worstCase = sk.getKey();
+                }
+                countSum += sk.getGuessCount();
             }
-            if (worstCount < sk.getGuessCount()) {
-                worstCount = sk.getGuessCount();
-                worstCase = sk.getKey();
-            }
-            countSum += sk.getGuessCount();
+
+            System.out.printf(
+                    "Average number of guesses for key of length %d over %d iterations: %.2f\n",
+                    KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
+            );
+            System.out.printf(
+                    "Best case: \"%s\" (%d guesses)\nWorst case: \"%s\" (%d guesses)\n",
+                    bestCase, bestCount, worstCase, worstCount
+            );
+
+            outFile.close();
+        } catch (IOException e) {
+            fail(e);
         }
-
-        System.out.printf(
-                "Average number of guesses for key of length %d over %d iterations: %.2f\n",
-                KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
-        );
-        System.out.printf(
-                "Best case: \"%s\" (%d guesses)\nWorst case: \"%s\" (%d guesses)\n",
-                bestCase, bestCount, worstCase, worstCount
-        );
     }
 
     @Test
     void randomKey16TestBreadFirst() {
-        final int MAX_ITER = 100_000;
-        final int KEY_LEN = 16;
+        try {
+            FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKey16TestBreadthFirst.csv");
+            outFile.write("Iteration,SecretKey,MaxCharFreqDeviation,GuessCount\n");
 
-        String bestCase = "", worstCase = "";
-        long bestCount = 4_294_967_296L, worstCount = 0;
-        int countSum = 0;
-        for (int i = 0; i < MAX_ITER; i++) {
-            SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
-            assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.BreadthFirst,false), sk.getKey());
+            final int MAX_ITER = 100_000;
+            final int KEY_LEN = 16;
 
-            if (bestCount > sk.getGuessCount()) {
-                bestCount = sk.getGuessCount();
-                bestCase = sk.getKey();
+            String bestCase = "", worstCase = "";
+            long bestCount = 4_294_967_296L, worstCount = 0;
+            int countSum = 0;
+            for (int i = 0; i < MAX_ITER; i++) {
+                SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
+                assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.BreadthFirst,false), sk.getKey());
+                outFile.write(String.format("%d,%s,%d,%d\n", i, sk.getKey(), getCharacterFrequencyMaxDeviation(sk.getKey()), sk.getGuessCount()));
+
+                if (bestCount > sk.getGuessCount()) {
+                    bestCount = sk.getGuessCount();
+                    bestCase = sk.getKey();
+                }
+                if (worstCount < sk.getGuessCount()) {
+                    worstCount = sk.getGuessCount();
+                    worstCase = sk.getKey();
+                }
+                countSum += sk.getGuessCount();
             }
-            if (worstCount < sk.getGuessCount()) {
-                worstCount = sk.getGuessCount();
-                worstCase = sk.getKey();
-            }
-            countSum += sk.getGuessCount();
+
+            System.out.printf(
+                    "Average number of guesses for key of length %d over %d iterations: %.2f\n",
+                    KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
+            );
+            System.out.printf(
+                    "Best case: \"%s\" (%d guesses)\nWorst case: \"%s\" (%d guesses)\n",
+                    bestCase, bestCount, worstCase, worstCount
+            );
+
+            outFile.close();
+        } catch (IOException e) {
+            fail(e);
         }
-
-        System.out.printf(
-                "Average number of guesses for key of length %d over %d iterations: %.2f\n",
-                KEY_LEN, MAX_ITER, (double) countSum / MAX_ITER
-        );
-        System.out.printf(
-                "Best case: \"%s\" (%d guesses)\nWorst case: \"%s\" (%d guesses)\n",
-                bestCase, bestCount, worstCase, worstCount
-        );
     }
 
 
