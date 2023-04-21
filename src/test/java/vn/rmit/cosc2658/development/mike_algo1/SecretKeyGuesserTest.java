@@ -283,26 +283,44 @@ class SecretKeyGuesserTest {
 
     @Test
     void randomKeyVariableLengthTest() {
-        final int MAX_KEY_LENGTH = 256;
-        double[] timerResults = new double[MAX_KEY_LENGTH - 1];
-        int[] countResults = new int[MAX_KEY_LENGTH - 1];
-        String[] secretKeys = new String[MAX_KEY_LENGTH - 1];
+        try {
+            FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKeyVariableLengthTest.csv");
+            outFile.write("KeyLength,SecretKey,MaxCharFreqDeviation,GuessCount,RunTime\n");
 
-        for (int keyLength = 1; keyLength < MAX_KEY_LENGTH; keyLength++) {
-            SecretKey sk = new SecretKey(keyLength, 0);  // Seed = 0 to ensure reproducible results
+            final int MAX_KEY_LENGTH = 256;
+            String[] secretKeys = new String[MAX_KEY_LENGTH - 1];
+            int[] countResults = new int[MAX_KEY_LENGTH - 1];
+            double[] timerResults = new double[MAX_KEY_LENGTH - 1];
 
-            long start = System.nanoTime();
-            assertEquals(SecretKeyGuesser.start(sk, keyLength, SecretKeyGuesser.Algorithm.Auto, false), sk.getKey());
-            long end = System.nanoTime();
+            for (int keyLength = 1; keyLength < MAX_KEY_LENGTH; keyLength++) {
+                SecretKey sk = new SecretKey(keyLength, 0);  // Seed = 0 to ensure reproducible results
 
-            timerResults[keyLength - 1] = (end - start) / 1_000_000.0F;  // Convert: ns --> ms
-            countResults[keyLength - 1] = sk.getGuessCount();
-            secretKeys[keyLength - 1] = sk.getKey();
-        }
+                long start = System.nanoTime();
+                assertEquals(SecretKeyGuesser.start(sk, keyLength, SecretKeyGuesser.Algorithm.Auto, false), sk.getKey());
+                long end = System.nanoTime();
 
-        System.out.println("[ ===== RESULTS ===== ]");
-        for (int i = 0; i < MAX_KEY_LENGTH - 1; i++) {
-            System.out.printf("\"%s\" took %d guesses in %.4f (ms).\n", secretKeys[i], countResults[i], timerResults[i]);
+                secretKeys[keyLength - 1] = sk.getKey();
+                countResults[keyLength - 1] = sk.getGuessCount();
+                timerResults[keyLength - 1] = (end - start) / 1_000_000.0F;  // Convert: ns --> ms
+
+                outFile.write(String.format(
+                        "%d,%s,%d,%d,%.4f\n",
+                        keyLength,
+                        sk.getKey(),
+                        getCharacterFrequencyMaxDeviation(sk.getKey()),
+                        countResults[keyLength - 1],
+                        timerResults[keyLength - 1]
+                ));
+            }
+
+            System.out.println("[ ===== RESULTS ===== ]");
+            for (int i = 0; i < MAX_KEY_LENGTH - 1; i++) {
+                System.out.printf("\"%s\" took %d guesses in %.4f (ms).\n", secretKeys[i], countResults[i], timerResults[i]);
+            }
+
+            outFile.close();
+        } catch (IOException e) {
+            fail(e);
         }
     }
 
