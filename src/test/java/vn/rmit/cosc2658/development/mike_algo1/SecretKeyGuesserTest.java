@@ -3,6 +3,9 @@ package vn.rmit.cosc2658.development.mike_algo1;
 import org.junit.jupiter.api.Test;
 import vn.rmit.cosc2658.development.SecretKey;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -268,5 +271,33 @@ class SecretKeyGuesserTest {
         for (int i = 0; i < MAX_KEY_LENGTH - 1; i++) {
             System.out.printf("\"%s\" took %d guesses in %.4f (ms).\n", secretKeys[i], countResults[i], timerResults[i]);
         }
+    }
+
+
+    @Test
+    void getCharacterFrequencyMaxDeviationTest() {
+        assertEquals(0, getCharacterFrequencyMaxDeviation("RRMMIITT"));
+        assertEquals(1, getCharacterFrequencyMaxDeviation("RRRMMIITT"));
+        assertEquals(2, getCharacterFrequencyMaxDeviation("RRIIMMIITT"));
+        assertEquals(3, getCharacterFrequencyMaxDeviation("TTTRMMIIT"));
+    }
+
+    private static int getCharacterFrequencyMaxDeviation(String str) {
+        int result = 0;
+
+        HashMap<Character, Integer> characterFrequencies = new HashMap<>();
+        for (int i = 0; i < str.length(); i++) {
+            characterFrequencies.merge(str.charAt(i), 1, Integer::sum);
+        }
+
+        ArrayList<Integer> frequencies = new ArrayList<>(characterFrequencies.values());
+        for (int i = 1; i < frequencies.size(); i++) {
+            result = Math.max(
+                    result,
+                    Math.abs(frequencies.get(i - 1) - frequencies.get(i))
+            );
+        }
+
+        return result;
     }
 }

@@ -71,16 +71,16 @@ public class SecretKeyGuesser {
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
         switch (algorithm) {
             default -> {
-                int distributionDeviation = 0;
+                int characterFrequencyMaxDeviation = 0;
                 for (int rank = 1; rank < CHAR.length; rank++) {
                     if (charFreq[hash(charCommonalityRank[rank])] == 0) break;
-                    distributionDeviation = Math.max(
-                            distributionDeviation,
+                    characterFrequencyMaxDeviation = Math.max(
+                            characterFrequencyMaxDeviation,
                             Math.abs(charFreq[hash(charCommonalityRank[rank - 1])] - charFreq[hash(charCommonalityRank[rank])])
                     );
                 }
 
-                if (distributionDeviation <= totalCharFreq / 4) {
+                if (characterFrequencyMaxDeviation <= totalCharFreq / 4) {
                     return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
                 } else {
                     return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
