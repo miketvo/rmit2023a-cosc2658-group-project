@@ -155,18 +155,28 @@ class SecretKeyGuesserTest {
     void randomKey16TestAuto() throws IOException {
         try {
             FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKey16TestAuto.csv");
-            outFile.write("Iteration,SecretKey,CharFreqRange,GuessCount\n");
+            outFile.write("Iteration,SecretKey,CharFreqRange,CharFreqMean,CharFreqMedian,CharFreqVariance,CharFreqStdDev,GuessCount\n");
 
-            final int MAX_ITER = 100_000;
+            final int MAX_ITER = 1_000_000;
             final int KEY_LEN = 16;
 
             String bestCase = "", worstCase = "";
             long bestCount = 4_294_967_296L, worstCount = 0;
             int countSum = 0;
             for (int i = 0; i < MAX_ITER; i++) {
-                SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
+                SecretKey sk = new SecretKey(KEY_LEN, i);  // Reproducible results for consistent performance measurement.
                 assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.Auto, false), sk.getKey());
-                outFile.write(String.format("%d,%s,%d,%d\n", i, sk.getKey(), getCharacterFrequencyRange(sk.getKey()), sk.getGuessCount()));
+                outFile.write(String.format(
+                        "%d,%s,%d,%.4f,%d,%.4f,%.4f,%d\n",
+                        i,
+                        sk.getKey(),
+                        getCharacterFrequencyRange(sk.getKey()),
+                        getMeanCharacterFrequency(sk.getKey()),
+                        getMedianCharacterFrequency(sk.getKey()),
+                        getVarianceCharacterFrequency(sk.getKey()),
+                        getStandardDeviationCharacterFrequency(sk.getKey()),
+                        sk.getGuessCount()
+                ));
 
                 if (bestCount > sk.getGuessCount()) {
                     bestCount = sk.getGuessCount();
@@ -198,18 +208,28 @@ class SecretKeyGuesserTest {
     void randomKey16TestDepthFirst() {
         try {
             FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKey16TestDepthFirst.csv");
-            outFile.write("Iteration,SecretKey,CharFreqRange,GuessCount\n");
+            outFile.write("Iteration,SecretKey,CharFreqRange,CharFreqMean,CharFreqMedian,CharFreqVariance,CharFreqStdDev,GuessCount\n");
 
-            final int MAX_ITER = 100_000;
+            final int MAX_ITER = 1_000_000;
             final int KEY_LEN = 16;
 
             String bestCase = "", worstCase = "";
             long bestCount = 4_294_967_296L, worstCount = 0;
             int countSum = 0;
             for (int i = 0; i < MAX_ITER; i++) {
-                SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
+                SecretKey sk = new SecretKey(KEY_LEN, i);  // Reproducible results for consistent performance measurement.
                 assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.DepthFirst,false), sk.getKey());
-                outFile.write(String.format("%d,%s,%d,%d\n", i, sk.getKey(), getCharacterFrequencyRange(sk.getKey()), sk.getGuessCount()));
+                outFile.write(String.format(
+                        "%d,%s,%d,%.4f,%d,%.4f,%.4f,%d\n",
+                        i,
+                        sk.getKey(),
+                        getCharacterFrequencyRange(sk.getKey()),
+                        getMeanCharacterFrequency(sk.getKey()),
+                        getMedianCharacterFrequency(sk.getKey()),
+                        getVarianceCharacterFrequency(sk.getKey()),
+                        getStandardDeviationCharacterFrequency(sk.getKey()),
+                        sk.getGuessCount()
+                ));
 
                 if (bestCount > sk.getGuessCount()) {
                     bestCount = sk.getGuessCount();
@@ -241,18 +261,28 @@ class SecretKeyGuesserTest {
     void randomKey16TestBreadFirst() {
         try {
             FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKey16TestBreadthFirst.csv");
-            outFile.write("Iteration,SecretKey,CharFreqRange,GuessCount\n");
+            outFile.write("Iteration,SecretKey,CharFreqRange,CharFreqMean,CharFreqMedian,CharFreqVariance,CharFreqStdDev,GuessCount\n");
 
-            final int MAX_ITER = 100_000;
+            final int MAX_ITER = 1_000_000;
             final int KEY_LEN = 16;
 
             String bestCase = "", worstCase = "";
             long bestCount = 4_294_967_296L, worstCount = 0;
             int countSum = 0;
             for (int i = 0; i < MAX_ITER; i++) {
-                SecretKey sk = new SecretKey(KEY_LEN);  // No need for reproducible results here, since the results are averaged.
+                SecretKey sk = new SecretKey(KEY_LEN, i);  // Reproducible results for consistent performance measurement.
                 assertEquals(SecretKeyGuesser.start(sk, KEY_LEN, SecretKeyGuesser.Algorithm.BreadthFirst,false), sk.getKey());
-                outFile.write(String.format("%d,%s,%d,%d\n", i, sk.getKey(), getCharacterFrequencyRange(sk.getKey()), sk.getGuessCount()));
+                outFile.write(String.format(
+                        "%d,%s,%d,%.4f,%d,%.4f,%.4f,%d\n",
+                        i,
+                        sk.getKey(),
+                        getCharacterFrequencyRange(sk.getKey()),
+                        getMeanCharacterFrequency(sk.getKey()),
+                        getMedianCharacterFrequency(sk.getKey()),
+                        getVarianceCharacterFrequency(sk.getKey()),
+                        getStandardDeviationCharacterFrequency(sk.getKey()),
+                        sk.getGuessCount()
+                ));
 
                 if (bestCount > sk.getGuessCount()) {
                     bestCount = sk.getGuessCount();
@@ -285,7 +315,7 @@ class SecretKeyGuesserTest {
     void randomKeyVariableLengthTest() {
         try {
             FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKeyVariableLengthTest.csv");
-            outFile.write("KeyLength,SecretKey,CharFreqRange,GuessCount,RunTime\n");
+            outFile.write("KeyLength,SecretKey,CharFreqRange,CharFreqMean,CharFreqMedian,CharFreqVariance,CharFreqStdDev,GuessCount,RunTime\n");
 
             final int MAX_KEY_LENGTH = 256;
             String[] secretKeys = new String[MAX_KEY_LENGTH - 1];
@@ -304,10 +334,14 @@ class SecretKeyGuesserTest {
                 timerResults[keyLength - 1] = (end - start) / 1_000_000.0F;  // Convert: ns --> ms
 
                 outFile.write(String.format(
-                        "%d,%s,%d,%d,%.4f\n",
+                        "%d,%s,%d,%.4f,%d,%.4f,%.4f,%d,%.4f\n",
                         keyLength,
                         sk.getKey(),
                         getCharacterFrequencyRange(sk.getKey()),
+                        getMeanCharacterFrequency(sk.getKey()),
+                        getMedianCharacterFrequency(sk.getKey()),
+                        getVarianceCharacterFrequency(sk.getKey()),
+                        getStandardDeviationCharacterFrequency(sk.getKey()),
                         countResults[keyLength - 1],
                         timerResults[keyLength - 1]
                 ));
@@ -341,7 +375,7 @@ class SecretKeyGuesserTest {
 
         ArrayList<Integer> frequencies = new ArrayList<>(characterFrequencies.values());
         int minFreq = frequencies.get(0), maxFreq = frequencies.get(0);
-        for (int i = 0; i < frequencies.size(); i++) {
+        for (int i = 1; i < frequencies.size(); i++) {
             if (minFreq > frequencies.get(i)) minFreq = frequencies.get(i);
             if (maxFreq < frequencies.get(i)) maxFreq = frequencies.get(i);
         }
@@ -352,35 +386,31 @@ class SecretKeyGuesserTest {
 
     @Test
     void getMeanCharacterFrequencyTest() {
-        assertEquals(0, getCharacterFrequencyRange("RRMMIITT"));
-        assertEquals(1, getCharacterFrequencyRange("RRRMMIITT"));
-        assertEquals(2, getCharacterFrequencyRange("RRIIMMIITT"));
-        assertEquals(3, getCharacterFrequencyRange("TTTRMMIIT"));
+        assertEquals(2.0, getMeanCharacterFrequency("RRMMIITT"));
+        assertEquals(2.25, getMeanCharacterFrequency("RRRMMIITT"));
+        assertEquals(2.5, getMeanCharacterFrequency("RRIIMMIITT"));
+        assertEquals(2.25, getMeanCharacterFrequency("TTTRMMIIT"));
     }
 
-    private static int getMeanCharacterFrequency(String str) {
-        int sum = 0;
-
+    private static double getMeanCharacterFrequency(String str) {
         HashMap<Character, Integer> characterFrequencies = new HashMap<>();
         for (int i = 0; i < str.length(); i++) {
             characterFrequencies.merge(str.charAt(i), 1, Integer::sum);
         }
 
+        double sum = 0;
         ArrayList<Integer> frequencies = new ArrayList<>(characterFrequencies.values());
-        for (int i = 1; i < frequencies.size(); i++) {
-            sum += frequencies.get(i);
-        }
-
+        for (int frequency : frequencies) sum += frequency;
         return sum / frequencies.size();
     }
 
 
     @Test
     void getMedianCharacterFrequencyTest() {
-        assertEquals(0, getCharacterFrequencyRange("RRMMIITT"));
-        assertEquals(1, getCharacterFrequencyRange("RRRMMIITT"));
-        assertEquals(2, getCharacterFrequencyRange("RRIIMMIITT"));
-        assertEquals(3, getCharacterFrequencyRange("TTTRMMIIT"));
+        assertEquals(2, getMedianCharacterFrequency("RRMMIITT"));
+        assertEquals(2, getMedianCharacterFrequency("RRRMMIITT"));
+        assertEquals(2, getMedianCharacterFrequency("RRIIMMIITT"));
+        assertEquals(2, getMedianCharacterFrequency("TTTRMMIIT"));
     }
 
     private static int getMedianCharacterFrequency(String str) {
@@ -390,34 +420,45 @@ class SecretKeyGuesserTest {
         }
 
         ArrayList<Integer> frequencies = new ArrayList<>(characterFrequencies.values());
+        frequencies.sort(Integer::compareTo);
         return frequencies.get(frequencies.size() / 2);
     }
 
 
     @Test
-    void getStandardDeviationCharacterFrequencyTest() {
-        assertEquals(0, getCharacterFrequencyRange("RRMMIITT"));
-        assertEquals(1, getCharacterFrequencyRange("RRRMMIITT"));
-        assertEquals(2, getCharacterFrequencyRange("RRIIMMIITT"));
-        assertEquals(3, getCharacterFrequencyRange("TTTRMMIIT"));
+    void getVarianceCharacterFrequencyTest() {
+        assertEquals(0, getVarianceCharacterFrequency("RRMMIITT"));
+        assertEquals(0.1875, getVarianceCharacterFrequency("RRRMMIITT"));
+        assertEquals(0.75, getVarianceCharacterFrequency("RRIIMMIITT"));
+        assertEquals(1.1875, getVarianceCharacterFrequency("TTTRMMIIT"));
     }
 
-    private static int getStandardDeviationCharacterFrequency(String str) {
-        int result = 0;
-
+    private static double getVarianceCharacterFrequency(String str) {
         HashMap<Character, Integer> characterFrequencies = new HashMap<>();
         for (int i = 0; i < str.length(); i++) {
             characterFrequencies.merge(str.charAt(i), 1, Integer::sum);
         }
 
         ArrayList<Integer> frequencies = new ArrayList<>(characterFrequencies.values());
-        for (int i = 1; i < frequencies.size(); i++) {
-            result = Math.max(
-                    result,
-                    Math.abs(frequencies.get(i - 1) - frequencies.get(i))
-            );
-        }
+        double mean = getMeanCharacterFrequency(str);
+        double variance = 0;
+        for (int frequency : frequencies) variance += Math.pow(frequency - mean, 2);
 
-        return result;
+        variance /= frequencies.size();
+
+        return variance;
+    }
+
+
+    @Test
+    void getStandardDeviationCharacterFrequencyTest() {
+        assertEquals(0, getStandardDeviationCharacterFrequency("RRMMIITT"), 0.0001);
+        assertEquals(0.433012702, getStandardDeviationCharacterFrequency("RRRMMIITT"), 0.0001);
+        assertEquals(0.866025404, getStandardDeviationCharacterFrequency("RRIIMMIITT"), 0.0001);
+        assertEquals(1.08972474, getStandardDeviationCharacterFrequency("TTTRMMIIT"), 0.0001);
+    }
+
+    private static double getStandardDeviationCharacterFrequency(String str) {
+        return Math.sqrt(getVarianceCharacterFrequency(str));
     }
 }
