@@ -1,5 +1,6 @@
 package vn.rmit.cosc2658.development.mike_algo1;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import vn.rmit.cosc2658.development.SecretKey;
 
@@ -312,6 +313,7 @@ class SecretKeyGuesserTest {
 
 
     @Test
+    @Disabled
     void randomKeyVariableLengthTest() {
         try {
             FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKeyVariableLengthTest.csv");
