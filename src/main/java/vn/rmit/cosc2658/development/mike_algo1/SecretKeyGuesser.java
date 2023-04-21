@@ -104,8 +104,9 @@ public class SecretKeyGuesser {
      * <h1>General Case "Linear Character Swap - Depth First" Guessing Algorithm</h1>
      *
      * <ul>
-     *     <li>Time complexity: O(n)</li>
+     *     <li>Time complexity: O(n<sup>2</sup>)</li>
      *     <li>Space complexity: O(n)</li>
+     *     <li>Guess complexity: O(n)</li>
      * </ul>
      *
      * <p>
@@ -214,8 +215,9 @@ public class SecretKeyGuesser {
      * <h1>General Case "Linear Character Swap - Breadth First" Guessing Algorithm</h1>
      *
      * <ul>
-     *     <li>Time complexity: O(n)</li>
+     *     <li>Time complexity: O(n<sup>2</sup>)</li>
      *     <li>Space complexity: O(n)</li>
+     *     <li>Guess complexity: O(n)</li>
      * </ul>
      *
      * <p>
