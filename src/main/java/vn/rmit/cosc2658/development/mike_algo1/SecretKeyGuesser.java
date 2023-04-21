@@ -71,16 +71,7 @@ public class SecretKeyGuesser {
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
         switch (algorithm) {
             default -> {
-                int characterFrequencyMaxDeviation = 0;
-                for (int rank = 1; rank < CHAR.length; rank++) {
-                    if (charFreq[hash(charCommonalityRank[rank])] == 0) break;
-                    characterFrequencyMaxDeviation = Math.max(
-                            characterFrequencyMaxDeviation,
-                            Math.abs(charFreq[hash(charCommonalityRank[rank - 1])] - charFreq[hash(charCommonalityRank[rank])])
-                    );
-                }
-
-                if (characterFrequencyMaxDeviation <= totalCharFreq / 4) {
+                if (getCharacterFrequencyRange(charFreq) <= totalCharFreq / 4) {
                     return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
                 } else {
                     return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
@@ -159,7 +150,13 @@ public class SecretKeyGuesser {
      */
     private static String linearCharacterSwapDepthFirst(SecretKey secretKey, int secretKeyLength, int[] charFreq, char[] charCommonalityRank, boolean verbose) {
         char mostCommonChar = charCommonalityRank[0];
-        char leastCommonChar = charCommonalityRank[CHAR.length - 1];
+        char leastCommonChar = mostCommonChar;
+        for (int rank = CHAR.length - 1; rank > 0; rank--) {
+            if (charFreq[hash(charCommonalityRank[rank])] > 0) {
+                leastCommonChar = charCommonalityRank[rank];
+                break;
+            }
+        }
         char[] baselineGuess = Character.toString(mostCommonChar).repeat(secretKeyLength).toCharArray();
         char[] correctKey = new char[secretKeyLength];
 
@@ -250,9 +247,9 @@ public class SecretKeyGuesser {
     private static String linearCharacterSwapBreadthFirst(SecretKey secretKey, int secretKeyLength, int[] charFreq, char[] charCommonalityRank, boolean verbose) {
         int mostCommonCharHash = hash(charCommonalityRank[0]);
         int leastCommonCharHash = 0;
-        for (int charHash = CHAR.length - 1; charHash > 0; charHash--) {
-            if (charFreq[charHash] > 0) {
-                leastCommonCharHash = charHash;
+        for (int rank = CHAR.length - 1; rank > 0; rank--) {
+            if (charFreq[hash(charCommonalityRank[rank])] > 0) {
+                leastCommonCharHash = hash(charCommonalityRank[rank]);
                 break;
             }
         }
@@ -320,7 +317,20 @@ public class SecretKeyGuesser {
         if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
         return String.valueOf(guess);
     }
-    
+
+
+    private static int getCharacterFrequencyRange(int[] charFreq) {
+        int minFreq = charFreq[0], maxFreq = charFreq[0];
+        for (int i = 1; i < charFreq.length; i++) {
+            if (charFreq[i] > 0) {
+                if (minFreq > charFreq[i]) minFreq = charFreq[i];
+                if (maxFreq < charFreq[i]) maxFreq = charFreq[i];
+            }
+        }
+
+        return maxFreq - minFreq;
+    }
+
 
     private static int hash(char character) {
         return switch (character) {
