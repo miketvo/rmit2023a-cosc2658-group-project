@@ -152,7 +152,7 @@ class SecretKeyGuesserTest {
 
 
     @Test
-    void randomKey16TestAuto() throws IOException {
+    void randomKey16TestAuto() {
         try {
             FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKey16TestAuto.csv");
             outFile.write("Iteration,SecretKey,CharFreqRange,CharFreqMean,CharFreqMedian,CharFreqVariance,CharFreqStdDev,GuessCount\n");
