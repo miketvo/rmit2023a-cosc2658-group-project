@@ -1,6 +1,5 @@
 package vn.rmit.cosc2658.development.mike_algo1;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import vn.rmit.cosc2658.development.SecretKey;
 
@@ -313,22 +312,115 @@ class SecretKeyGuesserTest {
 
 
     @Test
-    @Disabled
-    void randomKeyVariableLengthTest() {
+    void randomKeyVariableLengthTestAuto() {
         try {
-            FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKeyVariableLengthTest.csv");
+            FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKeyVariableLengthTestAuto.csv");
             outFile.write("KeyLength,SecretKey,CharFreqRange,CharFreqMean,CharFreqMedian,CharFreqVariance,CharFreqStdDev,GuessCount,RunTime\n");
 
-            final int MAX_KEY_LENGTH = 256;
-            String[] secretKeys = new String[MAX_KEY_LENGTH - 1];
-            int[] countResults = new int[MAX_KEY_LENGTH - 1];
-            double[] timerResults = new double[MAX_KEY_LENGTH - 1];
+            final int MAX_KEY_LENGTH = 512;
+            String[] secretKeys = new String[MAX_KEY_LENGTH];
+            int[] countResults = new int[MAX_KEY_LENGTH];
+            double[] timerResults = new double[MAX_KEY_LENGTH];
 
-            for (int keyLength = 1; keyLength < MAX_KEY_LENGTH; keyLength++) {
+            for (int keyLength = 1; keyLength <= MAX_KEY_LENGTH; keyLength++) {
                 SecretKey sk = new SecretKey(keyLength, 0);  // Seed = 0 to ensure reproducible results
 
                 long start = System.nanoTime();
                 assertEquals(SecretKeyGuesser.start(sk, keyLength, SecretKeyGuesser.Algorithm.Auto, false), sk.getKey());
+                long end = System.nanoTime();
+
+                secretKeys[keyLength - 1] = sk.getKey();
+                countResults[keyLength - 1] = sk.getGuessCount();
+                timerResults[keyLength - 1] = (end - start) / 1_000_000.0F;  // Convert: ns --> ms
+
+                outFile.write(String.format(
+                        "%d,%s,%d,%.4f,%d,%.4f,%.4f,%d,%.4f\n",
+                        keyLength,
+                        sk.getKey(),
+                        getCharacterFrequencyRange(sk.getKey()),
+                        getMeanCharacterFrequency(sk.getKey()),
+                        getMedianCharacterFrequency(sk.getKey()),
+                        getVarianceCharacterFrequency(sk.getKey()),
+                        getStandardDeviationCharacterFrequency(sk.getKey()),
+                        countResults[keyLength - 1],
+                        timerResults[keyLength - 1]
+                ));
+            }
+
+            System.out.println("[ ===== RESULTS ===== ]");
+            for (int i = 0; i < MAX_KEY_LENGTH - 1; i++) {
+                System.out.printf("\"%s\" took %d guesses in %.4f (ms).\n", secretKeys[i], countResults[i], timerResults[i]);
+            }
+
+            outFile.close();
+        } catch (IOException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void randomKeyVariableLengthTestDepthFirst() {
+        try {
+            FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKeyVariableLengthTestDepthFirst.csv");
+            outFile.write("KeyLength,SecretKey,CharFreqRange,CharFreqMean,CharFreqMedian,CharFreqVariance,CharFreqStdDev,GuessCount,RunTime\n");
+
+            final int MAX_KEY_LENGTH = 512;
+            String[] secretKeys = new String[MAX_KEY_LENGTH];
+            int[] countResults = new int[MAX_KEY_LENGTH];
+            double[] timerResults = new double[MAX_KEY_LENGTH];
+
+            for (int keyLength = 1; keyLength <= MAX_KEY_LENGTH; keyLength++) {
+                SecretKey sk = new SecretKey(keyLength, 0);  // Seed = 0 to ensure reproducible results
+
+                long start = System.nanoTime();
+                assertEquals(SecretKeyGuesser.start(sk, keyLength, SecretKeyGuesser.Algorithm.DepthFirst, false), sk.getKey());
+                long end = System.nanoTime();
+
+                secretKeys[keyLength - 1] = sk.getKey();
+                countResults[keyLength - 1] = sk.getGuessCount();
+                timerResults[keyLength - 1] = (end - start) / 1_000_000.0F;  // Convert: ns --> ms
+
+                outFile.write(String.format(
+                        "%d,%s,%d,%.4f,%d,%.4f,%.4f,%d,%.4f\n",
+                        keyLength,
+                        sk.getKey(),
+                        getCharacterFrequencyRange(sk.getKey()),
+                        getMeanCharacterFrequency(sk.getKey()),
+                        getMedianCharacterFrequency(sk.getKey()),
+                        getVarianceCharacterFrequency(sk.getKey()),
+                        getStandardDeviationCharacterFrequency(sk.getKey()),
+                        countResults[keyLength - 1],
+                        timerResults[keyLength - 1]
+                ));
+            }
+
+            System.out.println("[ ===== RESULTS ===== ]");
+            for (int i = 0; i < MAX_KEY_LENGTH - 1; i++) {
+                System.out.printf("\"%s\" took %d guesses in %.4f (ms).\n", secretKeys[i], countResults[i], timerResults[i]);
+            }
+
+            outFile.close();
+        } catch (IOException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void randomKeyVariableLengthTestBreadthFirst() {
+        try {
+            FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKeyVariableLengthTestBreadthFirst.csv");
+            outFile.write("KeyLength,SecretKey,CharFreqRange,CharFreqMean,CharFreqMedian,CharFreqVariance,CharFreqStdDev,GuessCount,RunTime\n");
+
+            final int MAX_KEY_LENGTH = 512;
+            String[] secretKeys = new String[MAX_KEY_LENGTH];
+            int[] countResults = new int[MAX_KEY_LENGTH];
+            double[] timerResults = new double[MAX_KEY_LENGTH];
+
+            for (int keyLength = 1; keyLength <= MAX_KEY_LENGTH; keyLength++) {
+                SecretKey sk = new SecretKey(keyLength, 0);  // Seed = 0 to ensure reproducible results
+
+                long start = System.nanoTime();
+                assertEquals(SecretKeyGuesser.start(sk, keyLength, SecretKeyGuesser.Algorithm.BreadthFirst, false), sk.getKey());
                 long end = System.nanoTime();
 
                 secretKeys[keyLength - 1] = sk.getKey();
