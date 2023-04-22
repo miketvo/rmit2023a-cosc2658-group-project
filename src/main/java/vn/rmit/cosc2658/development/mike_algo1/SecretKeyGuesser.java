@@ -13,11 +13,14 @@ public class SecretKeyGuesser {
      * <ul>
      *     <li>Time complexity: O(n)</li>
      *     <li>Space complexity: O(n)</li>
+     *     <li>Guess complexity: O(n)</li>
      * </ul>
      * @param secretKey The secret key to be guessed.
      * @param secretKeyLength Length of the secret key.
      * @param verbose Switch for verbose output. Defaults to <strong>{@code false}</strong>.
      * @return The correct guess for the secret key.
+     * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int, int[], char[], boolean)
+     * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int, int[], char[], boolean)
      */
     public static String start(SecretKey secretKey, int secretKeyLength, Algorithm algorithm, boolean verbose) {
         final int[] charFreq = new int[CHAR.length];  // Number of occurrences (frequency) for each possible character
@@ -29,10 +32,11 @@ public class SecretKeyGuesser {
 
         - Time complexity: O(1)
         - Space complexity: O(1)
+        - Guess complexity: O(1)
 
         ********************** */
-        int totalCharFreq = 0;  // The sum of charFreq of R, M, I, and T
-        for (int charHash = 0; totalCharFreq < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
+        int cumulativeCharFreq = 0;  // The sum of charFreq of R, M, I, and T
+        for (int charHash = 0; cumulativeCharFreq < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
             String guess = Character.toString(CHAR[charHash]).repeat(secretKeyLength);
 
             int matchCount = secretKey.guess(guess);
@@ -43,18 +47,17 @@ public class SecretKeyGuesser {
             }
 
             charFreq[charHash] = matchCount;
-            totalCharFreq += matchCount;
+            cumulativeCharFreq += matchCount;
         }
 
-        if (totalCharFreq == 0) {
+        if (cumulativeCharFreq == 0) {
             String guess = "T".repeat(secretKeyLength);
             if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
             return guess;
         }
 
-        if (totalCharFreq < secretKeyLength) {
-            charFreq[CHAR.length - 1] = secretKeyLength - totalCharFreq;
-            totalCharFreq += charFreq[CHAR.length - 1];
+        if (cumulativeCharFreq < secretKeyLength) {
+            charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
         }
 
 
@@ -69,18 +72,10 @@ public class SecretKeyGuesser {
 
         ************************************************************************************************************* */
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
+        double autoThreshold = secretKeyLength / 3.2;  // Based on test performance analysis and visualization using Python
         switch (algorithm) {
             default -> {
-                int distributionDeviation = 0;
-                for (int rank = 1; rank < CHAR.length; rank++) {
-                    if (charFreq[hash(charCommonalityRank[rank])] == 0) break;
-                    distributionDeviation = Math.max(
-                            distributionDeviation,
-                            Math.abs(charFreq[hash(charCommonalityRank[rank - 1])] - charFreq[hash(charCommonalityRank[rank])])
-                    );
-                }
-
-                if (distributionDeviation <= totalCharFreq / 4) {
+                if (getCharacterFrequencyRange(charFreq) <= autoThreshold) {
                     return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
                 } else {
                     return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
@@ -115,6 +110,7 @@ public class SecretKeyGuesser {
      * <ul>
      *     <li>Time complexity: O(n)</li>
      *     <li>Space complexity: O(n)</li>
+     *     <li>Guess complexity: O(n)</li>
      * </ul>
      *
      * <p>
@@ -159,7 +155,13 @@ public class SecretKeyGuesser {
      */
     private static String linearCharacterSwapDepthFirst(SecretKey secretKey, int secretKeyLength, int[] charFreq, char[] charCommonalityRank, boolean verbose) {
         char mostCommonChar = charCommonalityRank[0];
-        char leastCommonChar = charCommonalityRank[CHAR.length - 1];
+        char leastCommonChar = mostCommonChar;
+        for (int rank = CHAR.length - 1; rank > 0; rank--) {
+            if (charFreq[hash(charCommonalityRank[rank])] > 0) {
+                leastCommonChar = charCommonalityRank[rank];
+                break;
+            }
+        }
         char[] baselineGuess = Character.toString(mostCommonChar).repeat(secretKeyLength).toCharArray();
         char[] correctKey = new char[secretKeyLength];
 
@@ -219,6 +221,7 @@ public class SecretKeyGuesser {
      * <ul>
      *     <li>Time complexity: O(n)</li>
      *     <li>Space complexity: O(n)</li>
+     *     <li>Guess complexity: O(n)</li>
      * </ul>
      *
      * <p>
@@ -250,9 +253,9 @@ public class SecretKeyGuesser {
     private static String linearCharacterSwapBreadthFirst(SecretKey secretKey, int secretKeyLength, int[] charFreq, char[] charCommonalityRank, boolean verbose) {
         int mostCommonCharHash = hash(charCommonalityRank[0]);
         int leastCommonCharHash = 0;
-        for (int charHash = CHAR.length - 1; charHash > 0; charHash--) {
-            if (charFreq[charHash] > 0) {
-                leastCommonCharHash = charHash;
+        for (int rank = CHAR.length - 1; rank > 0; rank--) {
+            if (charFreq[hash(charCommonalityRank[rank])] > 0) {
+                leastCommonCharHash = hash(charCommonalityRank[rank]);
                 break;
             }
         }
@@ -320,7 +323,20 @@ public class SecretKeyGuesser {
         if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
         return String.valueOf(guess);
     }
-    
+
+
+    private static int getCharacterFrequencyRange(int[] charFreq) {
+        int minFreq = charFreq[0], maxFreq = charFreq[0];
+        for (int i = 1; i < charFreq.length; i++) {
+            if (charFreq[i] > 0) {
+                if (minFreq > charFreq[i]) minFreq = charFreq[i];
+                if (maxFreq < charFreq[i]) maxFreq = charFreq[i];
+            }
+        }
+
+        return maxFreq - minFreq;
+    }
+
 
     private static int hash(char character) {
         return switch (character) {
