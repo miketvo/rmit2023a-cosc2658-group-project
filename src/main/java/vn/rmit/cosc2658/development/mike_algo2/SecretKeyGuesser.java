@@ -66,18 +66,46 @@ public class SecretKeyGuesser {
             2. Linear Character Swap - Breadth First: Efficient for skewed distribution
 
         ************************************************************************************************************* */
-        final char[] correctKey = new char[secretKeyLength];
-        final boolean[] correctPos = new boolean[secretKeyLength];
-        final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
-        final double algoThreshold = secretKeyLength / 3.2;                // Based on test performance analysis and visualization using Python
-        int charFreqRange = getCharacterFrequencyRange(charFreq);
+        final char[] guess = new char[secretKeyLength];
+        final boolean[] correct = new boolean[secretKeyLength];
+        final double algoThreshold = secretKeyLength / 3.2;  // Based on test performance analysis and visualization using Python
 
+        char[] charCommonalityRank = rankCharByFrequency(charFreq);
+        char leastCommonChar = charCommonalityRank[charCommonalityRank.length - 1];
+        int currPos = 0;
         boolean foundCorrectKey = false;
         while (!foundCorrectKey) {
-            foundCorrectKey = true;
+            if (getCharacterFrequencyRange(charFreq) <= algoThreshold) {
+                currPos = depthFirstSwap(
+                        secretKey,
+                        guess, correct, currPos + 1,
+                        charFreq, rankCharByFrequency(charFreq),
+                        verbose
+                );
+            } else {
+                currPos = breadthFirstSwap(
+                        secretKey,
+                        guess, correct, currPos + 1,
+                        charFreq, rankCharByFrequency(charFreq),
+                        verbose
+                );
+            }
+
+            cumulativeCharFreq--;
+            if (cumulativeCharFreq == charFreq[leastCommonChar]) foundCorrectKey = true;
         }
 
-        return String.valueOf(correctKey);
+        charCommonalityRank = rankCharByFrequency(charFreq);
+        leastCommonChar = charCommonalityRank[charCommonalityRank.length - 1];
+        for (int charPos = 0; charFreq[hash(leastCommonChar)] > 0; charPos++) {
+            if (!correct[charPos]) {
+                guess[charPos] = leastCommonChar;
+                charFreq[hash(leastCommonChar)]--;
+            }
+        }
+
+        if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
+        return String.valueOf(guess);
     }
 
     /**
@@ -87,6 +115,25 @@ public class SecretKeyGuesser {
      */
     public static String start(SecretKey secretKey, int secretKeyLength) {
         return start(secretKey, secretKeyLength, true);
+    }
+
+
+    private static int depthFirstSwap(
+            SecretKey secretKey,
+            char[] correctKey, boolean[] correct, int startPos,
+            int[] charFreq, char[] charCommonalityRank,
+            boolean verbose
+    ) {
+        return startPos;
+    }
+
+    private static int breadthFirstSwap(
+            SecretKey secretKey,
+            char[] correctKey, boolean[] correct, int startPos,
+            int[] charFreq, char[] charCommonalityRank,
+            boolean verbose
+    ) {
+        return startPos;
     }
 
 
@@ -113,7 +160,10 @@ public class SecretKeyGuesser {
     }
 
     /**
-     * <p>Returns a sorted (descending) array of all possible characters by their frequencies.</p>
+     * <p>
+     *     Returns a sorted (descending) array of all possible characters by their frequencies. Characters with
+     *     frequency 0 are not included.
+     * </p>
      *
      * <ul>
      *     <li>Time complexity: O(n log n)</li>
@@ -130,7 +180,12 @@ public class SecretKeyGuesser {
         for (int i = 0; i < CHAR.length; i++) rankedChars[i] = CHAR[i];
         mergeSort(rankedChars, freqs, 0, CHAR.length - 1);
 
-        return rankedChars;
+        int nonZeroFreqCharCount = 0;
+        for (int freq : freqs) if (freq > 0) nonZeroFreqCharCount++;
+        char[] rankedCharsFiltered = new char[nonZeroFreqCharCount];
+        for (int i = 0; i < nonZeroFreqCharCount; i++) rankedCharsFiltered[i] = rankedChars[i];
+
+        return rankedCharsFiltered;
     }
 
     private static void mergeSort(char[] rankedChars, int[] freqs, int start, int end) {
