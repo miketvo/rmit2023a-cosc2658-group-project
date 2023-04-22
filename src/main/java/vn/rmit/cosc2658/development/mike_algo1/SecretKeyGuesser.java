@@ -13,11 +13,14 @@ public class SecretKeyGuesser {
      * <ul>
      *     <li>Time complexity: O(n)</li>
      *     <li>Space complexity: O(n)</li>
+     *     <li>Guess complexity: O(n)</li>
      * </ul>
      * @param secretKey The secret key to be guessed.
      * @param secretKeyLength Length of the secret key.
      * @param verbose Switch for verbose output. Defaults to <strong>{@code false}</strong>.
      * @return The correct guess for the secret key.
+     * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int, int[], char[], boolean)
+     * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int, int[], char[], boolean)
      */
     public static String start(SecretKey secretKey, int secretKeyLength, Algorithm algorithm, boolean verbose) {
         final int[] charFreq = new int[CHAR.length];  // Number of occurrences (frequency) for each possible character
@@ -29,6 +32,7 @@ public class SecretKeyGuesser {
 
         - Time complexity: O(1)
         - Space complexity: O(1)
+        - Guess complexity: O(1)
 
         ********************** */
         int totalCharFreq = 0;  // The sum of charFreq of R, M, I, and T
