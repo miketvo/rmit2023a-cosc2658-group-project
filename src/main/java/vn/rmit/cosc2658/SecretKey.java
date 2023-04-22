@@ -1,61 +1,38 @@
 package vn.rmit.cosc2658;
 
-import java.util.Random;
-
-
 public class SecretKey {
-    private static final char[] CHAR = "RMIT".toCharArray();
-    private final String key;
-    private int guessCount;
+    private String correctKey;
+    private int counter;
 
-
-    public SecretKey(String key) {
-        this.key = key;
-        guessCount = 0;
+    public SecretKey() {
+        // for the real test, your program will not know this
+        correctKey = "RRRRRRRRRMITRMIT";
+        counter = 0;
     }
 
-    public SecretKey(int keyLength, int seed) {
-        Random rnd = new Random(seed);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < keyLength; i++) sb.append(CHAR[rnd.nextInt(4)]);
-
-        key = sb.toString();
-        guessCount = 0;
-    }
-
-    public SecretKey(int keyLength) {
-        Random rnd = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < keyLength; i++) sb.append(CHAR[rnd.nextInt(4)]);
-
-        key = sb.toString();
-        guessCount = 0;
-    }
-
-
-    private boolean validChar(char c) {
-        for (char C : CHAR) if (C == c) return true;
-        return false;
-    }
-
-
-    public int guess(String guess) {
-        guessCount++;
-        if (guess.length() != key.length()) return -1;
-
-        int match_count = 0;
-        for (int i = 0; i < key.length(); i++) {
-            if (!validChar(guess.toUpperCase().charAt(i))) return -1;
-            if (guess.toUpperCase().charAt(i) == key.charAt(i)) match_count++;
+    public int guess(String guessedKey) {
+        counter++;
+        // validation
+        if (guessedKey.length() != correctKey.length()) {
+            return -1;
         }
-        return match_count;
+        int matched = 0;
+        for (int i = 0; i < guessedKey.length(); i++) {
+            char c = guessedKey.charAt(i);
+            if (c != 'R' && c != 'M' && c != 'I' && c != 'T') {
+                return -1;
+            }
+            if (c == correctKey.charAt(i)) {
+                matched++;
+            }
+        }
+        if (matched == correctKey.length()) {
+            System.out.println("Number of guesses: " + counter);
+        }
+        return matched;
     }
 
-    public int getGuessCount() {
-        return guessCount;
-    }
-
-    public String getKey() {
-        return key;
+    public static void main(String[] args) {
+        new SecretKeyGuesser().start();
     }
 }
