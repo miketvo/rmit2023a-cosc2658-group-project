@@ -35,8 +35,8 @@ public class SecretKeyGuesser {
         - Guess complexity: O(1)
 
         ********************** */
-        int totalCharFreq = 0;  // The sum of charFreq of R, M, I, and T
-        for (int charHash = 0; totalCharFreq < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
+        int cumulativeCharFreq = 0;  // The sum of charFreq of R, M, I, and T
+        for (int charHash = 0; cumulativeCharFreq < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
             String guess = Character.toString(CHAR[charHash]).repeat(secretKeyLength);
 
             int matchCount = secretKey.guess(guess);
@@ -47,18 +47,17 @@ public class SecretKeyGuesser {
             }
 
             charFreq[charHash] = matchCount;
-            totalCharFreq += matchCount;
+            cumulativeCharFreq += matchCount;
         }
 
-        if (totalCharFreq == 0) {
+        if (cumulativeCharFreq == 0) {
             String guess = "T".repeat(secretKeyLength);
             if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
             return guess;
         }
 
-        if (totalCharFreq < secretKeyLength) {
-            charFreq[CHAR.length - 1] = secretKeyLength - totalCharFreq;
-            totalCharFreq += charFreq[CHAR.length - 1];
+        if (cumulativeCharFreq < secretKeyLength) {
+            charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
         }
 
 
@@ -75,7 +74,7 @@ public class SecretKeyGuesser {
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
         switch (algorithm) {
             default -> {
-                if (getCharacterFrequencyRange(charFreq) <= totalCharFreq / 4) {
+                if (getCharacterFrequencyRange(charFreq) <= secretKeyLength / 4) {
                     return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
                 } else {
                     return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
