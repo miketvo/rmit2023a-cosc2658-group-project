@@ -72,9 +72,10 @@ public class SecretKeyGuesser {
 
         ************************************************************************************************************* */
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
+        double autoThreshold = secretKeyLength / 3.2;  // Based on test performance analysis and visualization using Python
         switch (algorithm) {
             default -> {
-                if (getCharacterFrequencyRange(charFreq) <= secretKeyLength / 4) {
+                if (getCharacterFrequencyRange(charFreq) <= autoThreshold) {
                     return linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
                 } else {
                     return linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, verbose);
