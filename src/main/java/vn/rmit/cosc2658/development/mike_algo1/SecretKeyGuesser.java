@@ -56,9 +56,7 @@ public class SecretKeyGuesser {
             return guess;
         }
 
-        if (cumulativeCharFreq < secretKeyLength) {
-            charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
-        }
+        charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
 
 
         /* *************************************************************************************************************
