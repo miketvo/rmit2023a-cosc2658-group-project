@@ -258,7 +258,7 @@ class SecretKeyGuesserTest {
     }
 
     @Test
-    void randomKey16TestBreadFirst() {
+    void randomKey16TestBreadthFirst() {
         try {
             FileWriter outFile = new FileWriter(OUTPUT_DIR + "randomKey16TestBreadthFirst.csv");
             outFile.write("Iteration,SecretKey,CharFreqRange,CharFreqMean,CharFreqMedian,CharFreqVariance,CharFreqStdDev,GuessCount\n");
