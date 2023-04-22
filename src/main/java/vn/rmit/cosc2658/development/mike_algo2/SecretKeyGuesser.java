@@ -73,8 +73,9 @@ public class SecretKeyGuesser {
         int currPos = 0;
         boolean foundCorrectKey = false;
         while (!foundCorrectKey) {
-            char[] charCommonalityRank = rankCharByFrequency(charFreq);
+            if (correct[currPos]) continue;
 
+            char[] charCommonalityRank = rankCharByFrequency(charFreq);
             if (getCharacterFrequencyRange(charFreq) <= algoThreshold) {
                 depthFirstSwap(
                         secretKey,
