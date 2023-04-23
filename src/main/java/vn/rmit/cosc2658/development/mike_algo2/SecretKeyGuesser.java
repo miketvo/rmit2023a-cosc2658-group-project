@@ -75,7 +75,7 @@ public class SecretKeyGuesser {
 
         int currPos = 0;
         boolean foundCorrectKey = false;
-        while (currPos < secretKeyLength && !foundCorrectKey) {
+        while (!foundCorrectKey) {
             if (guess.isCorrectAt(currPos)) {
                 currPos++;
                 continue;
