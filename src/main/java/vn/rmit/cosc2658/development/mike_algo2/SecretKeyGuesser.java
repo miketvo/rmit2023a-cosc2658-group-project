@@ -209,15 +209,6 @@ public class SecretKeyGuesser {
         return sum;
     }
 
-    private static int getCorrectCount(boolean[] correct) {
-        int sum = 0;
-        for (boolean position : correct) {
-            if (position) sum++;
-        }
-
-        return sum;
-    }
-
     private static int getCharacterFrequencyRange(int[] charFreq) {
         int minFreq = charFreq[0], maxFreq = charFreq[0];
         for (int i = 1; i < charFreq.length; i++) {
