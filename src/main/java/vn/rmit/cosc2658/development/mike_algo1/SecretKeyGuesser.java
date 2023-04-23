@@ -272,7 +272,7 @@ public class SecretKeyGuesser {
 
                 guess[i] = CHAR[nextCommonCharHash];
                 int newMatchCount = secretKey.guess(String.valueOf(guess));
-                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), cumulativeMatchCount);
+                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), newMatchCount);
 
                 switch (newMatchCount - cumulativeMatchCount) {
                     case 1 -> {  // New replacement character is correct for this position
