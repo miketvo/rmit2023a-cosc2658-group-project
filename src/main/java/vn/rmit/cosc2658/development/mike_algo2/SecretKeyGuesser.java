@@ -53,7 +53,6 @@ public class SecretKeyGuesser {
         }
 
         charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
-        cumulativeCharFreq = secretKeyLength;
 
 
         /* *************************************************************************************************************
@@ -62,22 +61,28 @@ public class SecretKeyGuesser {
         ================================================================
 
         Based on characters distribution, choose one of the following algorithm to minimize number of guesses:
-            1. Linear Character Swap - Depth First: Efficient for roughly equal distribution
-            2. Linear Character Swap - Breadth First: Efficient for skewed distribution
+            1. Depth First Swap: Efficient for roughly equal distribution
+            2. Breadth First Swap: Efficient for skewed distribution
 
         ************************************************************************************************************* */
+        int baselineMatchCount = charFreq[hash(rankCharByFrequency(charFreq)[0])];
+        char mostCommonChar = rankCharByFrequency(charFreq)[0];
+        String baselineGuess = Character.toString(mostCommonChar).repeat(secretKeyLength);
         Guess guess = new Guess(
-                Character.toString(rankCharByFrequency(charFreq)[0]).repeat(secretKeyLength).toCharArray(),
-                charFreq[hash(rankCharByFrequency(charFreq)[0])]
+                baselineGuess.toCharArray(),
+                baselineMatchCount
         );
-        final double algoThreshold = secretKeyLength / 3.2;  // Based on test performance analysis and visualization using Python
 
         int currPos = 0;
         boolean foundCorrectKey = false;
         while (currPos < secretKeyLength && !foundCorrectKey) {
-            if (guess.isCorrectAt(currPos)) continue;
+            if (guess.isCorrectAt(currPos)) {
+                currPos++;
+                continue;
+            }
 
             char[] charCommonalityRank = rankCharByFrequency(charFreq);
+            double algoThreshold = (secretKeyLength - guess.getMatchCount()) / 3.2;  // Based on test performance analysis and visualization using Python
             if (getCharacterFrequencyRange(charFreq, charCommonalityRank) <= algoThreshold) {
                 depthFirstSwap(
                         secretKey, guess,
@@ -85,29 +90,27 @@ public class SecretKeyGuesser {
                         verbose
                 );
             } else {
-                currPos = breadthFirstSwap(
+                breadthFirstSwap(
                         secretKey, guess,
                         currPos, charFreq, charCommonalityRank,
                         verbose
                 );
             }
-            currPos++;
-            cumulativeCharFreq--;
 
             charCommonalityRank = rankCharByFrequency(charFreq);
             char leastCommonChar = charCommonalityRank[charCommonalityRank.length - 1];
-            if (getTotalCharFreq(charFreq) == charFreq[hash(leastCommonChar)] && cumulativeCharFreq == charFreq[hash(leastCommonChar)]) {
+            if (getTotalCharFreq(charFreq) == charFreq[hash(leastCommonChar)]) {
                 foundCorrectKey = true;
             }
         }
 
-        char lastChar = rankCharByFrequency(charFreq)[0];
-        for (int charPos = 0; charFreq[hash(lastChar)] > 0; charPos++) {
-            if (!guess.isCorrectAt(charPos)) {
-                guess.setCharAt(charPos, lastChar);
-                charFreq[hash(lastChar)]--;
-            }
-        }
+//        char lastChar = rankCharByFrequency(charFreq)[0];
+//        for (int charPos = 0; charFreq[hash(lastChar)] > 0; charPos++) {
+//            if (!guess.isCorrectAt(charPos)) {
+//                guess.setCharAt(charPos, lastChar);
+//                charFreq[hash(lastChar)]--;
+//            }
+//        }
 
         if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
         return String.valueOf(guess);
@@ -125,55 +128,57 @@ public class SecretKeyGuesser {
 
     private static void depthFirstSwap(
             SecretKey secretKey, Guess guess,
-            int startPos, int[] charFreq, char[] charCommonalityRank,
+            int charPos, int[] charFreq, char[] charCommonalityRank,
             boolean verbose
     ) {
-        char mostCommonChar = charCommonalityRank[0];
         char leastCommonChar = charCommonalityRank[charCommonalityRank.length - 1];
 
         for (int nextCommonCharIndex = 1; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
 
-            guess.setCharAt(startPos, CHAR[nextCommonCharHash]);
+            char baselineGuess = guess.getCharAt(charPos);
+            guess.setCharAt(charPos, CHAR[nextCommonCharHash]);
             int newMatchCount = secretKey.guess(guess.toString());
             if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, newMatchCount);
 
-            if (newMatchCount < guess.getMatchCount()) {  // Most common character is correct for this position
-                guess.setCharAt(startPos, mostCommonChar);
-                guess.setCorrectAt(startPos);
-                charFreq[hash(mostCommonChar)]--;
+            if (newMatchCount < guess.getMatchCount()) {  // Original baseline guess character is correct for this position
+                guess.setCharAt(charPos, baselineGuess);
+                guess.setCorrectAt(charPos);
+                charFreq[hash(baselineGuess)]--;
                 break;
             }
 
             if (newMatchCount > guess.getMatchCount()) {  // Next most common character is correct for this position
-                guess.setCorrectAt(startPos);
+                guess.setCorrectAt(charPos);
                 charFreq[nextCommonCharHash]--;
                 guess.setMatchCount(newMatchCount);
                 break;
             }
         }
 
-        if (!guess.isCorrectAt(startPos)) {  // Least common character is correct for this position
-            guess.setCharAt(startPos, leastCommonChar);
-            guess.setCorrectAt(startPos);
+        if (!guess.isCorrectAt(charPos)) {  // Remaining character is correct for this position
+            guess.setCharAt(charPos, leastCommonChar);
+            guess.setCorrectAt(charPos);
             charFreq[hash(leastCommonChar)]--;
             guess.setMatchCount(guess.getMatchCount() + 1);
         }
     }
 
-    private static int breadthFirstSwap(
+    private static void breadthFirstSwap(
             SecretKey secretKey, Guess guess,
-            int startPos, int[] charFreq, char[] charCommonalityRank,
+            int startCharPos, int[] charFreq, char[] charCommonalityRank,
             boolean verbose
     ) {
         int secretKeyLength = guess.length;
-        int mostCommonCharHash = hash(charCommonalityRank[0]);
 
         for (int nextCommonCharIndex = 1; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
-            for (int charPos = startPos; guess.getMatchCount() < secretKeyLength - 1 && charFreq[nextCommonCharHash] > 0 && charPos < secretKeyLength; charPos++) {
+            if (charFreq[nextCommonCharHash] == 0) continue;
+
+            for (int charPos = startCharPos; guess.getMatchCount() < secretKeyLength - 1 && charPos < secretKeyLength; charPos++) {
                 if (guess.isCorrectAt(charPos)) continue;
 
+                char baselineGuess = guess.getCharAt(charPos);
                 guess.setCharAt(charPos, CHAR[nextCommonCharHash]);
                 int newMatchCount = secretKey.guess(guess.toString());
                 if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, newMatchCount);
@@ -183,19 +188,19 @@ public class SecretKeyGuesser {
                         guess.setCorrectAt(charPos);
                         charFreq[nextCommonCharHash]--;
                         guess.setMatchCount(newMatchCount);
-                        return charPos;
+                        return;
                     }
-                    case -1 -> {  // Original baseline most common character guess is correct for this position
-                        guess.setCharAt(charPos, CHAR[mostCommonCharHash]);
+                    case -1 -> {  // Original baseline guess character guess is correct for this position
+                        guess.setCharAt(charPos, baselineGuess);
                         guess.setCorrectAt(charPos);
-                        charFreq[mostCommonCharHash]--;
-                        return charPos;
+                        charFreq[hash(baselineGuess)]--;
+                        return;
                     }
                 }
             }
         }
 
-        throw new RuntimeException("SecretKeyGuesser.breadthFirstSwap() has exhausted possible positions!");
+        throw new RuntimeException("SecretKeyGuesser.breadthFirstSwap() has exhausted all possible positions!");
     }
 
 

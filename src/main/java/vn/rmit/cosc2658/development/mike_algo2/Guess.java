@@ -17,6 +17,10 @@ public class Guess {
     }
 
 
+    public char getCharAt(int charPost) {
+        return guess[charPost];
+    }
+
     public void setCharAt(int charPos, char value) {
         guess[charPos] = value;
     }
