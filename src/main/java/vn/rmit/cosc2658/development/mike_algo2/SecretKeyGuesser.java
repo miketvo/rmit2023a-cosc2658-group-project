@@ -136,6 +136,7 @@ public class SecretKeyGuesser {
 
         for (int nextCommonCharIndex = 0; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
+            if (CHAR[nextCommonCharHash] == guess.getCharAt(charPos)) continue;
 
             char baselineGuess = guess.getCharAt(charPos);
             guess.setCharAt(charPos, CHAR[nextCommonCharHash]);
@@ -157,7 +158,7 @@ public class SecretKeyGuesser {
             }
         }
 
-        if (!guess.isCorrectAt(charPos)) {  // Remaining most common character is correct for this position
+        if (!guess.isCorrectAt(charPos)) {  // Remaining least common character is correct for this position
             guess.setCharAt(charPos, leastCommonChar);
             guess.setCorrectAt(charPos);
             charFreq[hash(leastCommonChar)]--;
@@ -172,9 +173,9 @@ public class SecretKeyGuesser {
     ) {
         int secretKeyLength = guess.length;
 
-        for (int nextCommonCharIndex = 1; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
+        for (int nextCommonCharIndex = 0; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
-            if (charFreq[nextCommonCharHash] == 0) continue;
+            if (charFreq[nextCommonCharHash] == 0 || CHAR[nextCommonCharHash] == guess.getCharAt(startCharPos)) continue;
 
             for (int charPos = startCharPos; guess.getMatchCount() < secretKeyLength - 1 && charPos < secretKeyLength; charPos++) {
                 if (guess.isCorrectAt(charPos)) continue;
