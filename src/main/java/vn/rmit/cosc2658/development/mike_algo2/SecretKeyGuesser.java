@@ -104,13 +104,13 @@ public class SecretKeyGuesser {
             }
         }
 
-//        char lastChar = rankCharByFrequency(charFreq)[0];
-//        for (int charPos = 0; charFreq[hash(lastChar)] > 0; charPos++) {
-//            if (!guess.isCorrectAt(charPos)) {
-//                guess.setCharAt(charPos, lastChar);
-//                charFreq[hash(lastChar)]--;
-//            }
-//        }
+        char lastChar = rankCharByFrequency(charFreq)[0];
+        for (int charPos = 0; charFreq[hash(lastChar)] > 0; charPos++) {
+            if (!guess.isCorrectAt(charPos)) {
+                guess.setCharAt(charPos, lastChar);
+                charFreq[hash(lastChar)]--;
+            }
+        }
 
         if (verbose) System.out.printf("I found the secret key. It is \"%s\"\n", guess);
         return String.valueOf(guess);
@@ -131,9 +131,11 @@ public class SecretKeyGuesser {
             int charPos, int[] charFreq, char[] charCommonalityRank,
             boolean verbose
     ) {
-        char leastCommonChar = charCommonalityRank[charCommonalityRank.length - 1];
+        char mostCommonChar = charCommonalityRank[0];
 
         for (int nextCommonCharIndex = 1; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
+            if (nextCommonCharIndex == hash(guess.getCharAt(charPos))) continue;
+
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
 
             char baselineGuess = guess.getCharAt(charPos);
@@ -156,10 +158,10 @@ public class SecretKeyGuesser {
             }
         }
 
-        if (!guess.isCorrectAt(charPos)) {  // Remaining character is correct for this position
-            guess.setCharAt(charPos, leastCommonChar);
+        if (!guess.isCorrectAt(charPos)) {  // Remaining most common character is correct for this position
+            guess.setCharAt(charPos, mostCommonChar);
             guess.setCorrectAt(charPos);
-            charFreq[hash(leastCommonChar)]--;
+            charFreq[hash(mostCommonChar)]--;
             guess.setMatchCount(guess.getMatchCount() + 1);
         }
     }
