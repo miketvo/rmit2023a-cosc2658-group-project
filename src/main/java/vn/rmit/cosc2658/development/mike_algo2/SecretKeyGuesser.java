@@ -1,8 +1,9 @@
 package vn.rmit.cosc2658.development.mike_algo2;
 
-
 import vn.rmit.cosc2658.development.SecretKey;
 
+
+@SuppressWarnings({"DuplicatedCode", "ManualArrayCopy"})
 public class SecretKeyGuesser {
     private static final char[] CHAR = "RMIT".toCharArray(); // Possible characters in secret key
 

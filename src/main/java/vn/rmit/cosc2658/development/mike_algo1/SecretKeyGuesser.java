@@ -3,6 +3,7 @@ package vn.rmit.cosc2658.development.mike_algo1;
 import vn.rmit.cosc2658.development.SecretKey;
 
 
+@SuppressWarnings({"DuplicatedCode", "ManualArrayCopy"})
 public class SecretKeyGuesser {
     enum Algorithm { Auto, DepthFirst, BreadthFirst }
 
