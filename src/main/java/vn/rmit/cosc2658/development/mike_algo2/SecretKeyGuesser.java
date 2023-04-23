@@ -78,7 +78,7 @@ public class SecretKeyGuesser {
             if (guess.isCorrectAt(currPos)) continue;
 
             char[] charCommonalityRank = rankCharByFrequency(charFreq);
-            if (getCharacterFrequencyRange(charFreq) <= algoThreshold) {
+            if (getCharacterFrequencyRange(charFreq, charCommonalityRank) <= algoThreshold) {
                 depthFirstSwap(
                         secretKey, guess,
                         currPos, charFreq, charCommonalityRank,
@@ -168,18 +168,17 @@ public class SecretKeyGuesser {
     ) {
         int secretKeyLength = guess.length;
         int mostCommonCharHash = hash(charCommonalityRank[0]);
-        int cumulativeMatchCount = charFreq[mostCommonCharHash];
 
         for (int nextCommonCharIndex = 1; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
-            for (int charPos = startPos; cumulativeMatchCount < secretKeyLength - 1 && charFreq[nextCommonCharHash] > 0 && charPos < secretKeyLength; charPos++) {
+            for (int charPos = startPos; guess.getMatchCount() < secretKeyLength - 1 && charFreq[nextCommonCharHash] > 0 && charPos < secretKeyLength; charPos++) {
                 if (guess.isCorrectAt(charPos)) continue;
 
                 guess.setCharAt(charPos, CHAR[nextCommonCharHash]);
                 int newMatchCount = secretKey.guess(guess.toString());
-                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, cumulativeMatchCount);
+                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", guess, newMatchCount);
 
-                switch (newMatchCount - cumulativeMatchCount) {
+                switch (newMatchCount - guess.getMatchCount()) {
                     case 1 -> {  // New replacement character is correct for this position
                         guess.setCorrectAt(charPos);
                         charFreq[nextCommonCharHash]--;
@@ -196,30 +195,9 @@ public class SecretKeyGuesser {
             }
         }
 
-        return startPos;
+        throw new RuntimeException("SecretKeyGuesser.breadthFirstSwap() has exhausted possible positions!");
     }
 
-
-    private static int getTotalCharFreq(int[] charFreq) {
-        int sum = 0;
-        for (int freq : charFreq) {
-            sum += freq;
-        }
-
-        return sum;
-    }
-
-    private static int getCharacterFrequencyRange(int[] charFreq) {
-        int minFreq = charFreq[0], maxFreq = charFreq[0];
-        for (int i = 1; i < charFreq.length; i++) {
-            if (charFreq[i] > 0) {
-                if (minFreq > charFreq[i]) minFreq = charFreq[i];
-                if (maxFreq < charFreq[i]) maxFreq = charFreq[i];
-            }
-        }
-
-        return maxFreq - minFreq;
-    }
 
     private static int hash(char character) {
         return switch (character) {
@@ -229,6 +207,20 @@ public class SecretKeyGuesser {
             case 'T' -> 3;
             default -> throw new IllegalStateException("Unexpected value: " + character);
         };
+    }
+
+    private static int getTotalCharFreq(int[] charFreq) {
+        int sum = 0;
+        for (int freq : charFreq) {
+            sum += freq;
+        }
+        return sum;
+    }
+
+    private static int getCharacterFrequencyRange(int[] charFreq, char[] charCommonalityRank) {
+        int maxFreq = charFreq[hash(charCommonalityRank[0])];
+        int minFreq = charFreq[hash(charCommonalityRank[charCommonalityRank.length - 1])];
+        return maxFreq - minFreq;
     }
 
     /**
