@@ -105,7 +105,7 @@ public class SecretKeyGuesser {
         }
 
         char lastChar = rankCharByFrequency(charFreq)[0];
-        for (int charPos = 0; charFreq[hash(lastChar)] > 0; charPos++) {
+        for (int charPos = 0; charPos < guess.length; charPos++) {
             if (!guess.isCorrectAt(charPos)) {
                 guess.setCharAt(charPos, lastChar);
                 charFreq[hash(lastChar)]--;
@@ -131,11 +131,9 @@ public class SecretKeyGuesser {
             int charPos, int[] charFreq, char[] charCommonalityRank,
             boolean verbose
     ) {
-        char mostCommonChar = charCommonalityRank[0];
+        char leastCommonChar = charCommonalityRank[charCommonalityRank.length - 1];
 
-        for (int nextCommonCharIndex = 1; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
-            if (nextCommonCharIndex == hash(guess.getCharAt(charPos))) continue;
-
+        for (int nextCommonCharIndex = 0; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
 
             char baselineGuess = guess.getCharAt(charPos);
@@ -159,9 +157,9 @@ public class SecretKeyGuesser {
         }
 
         if (!guess.isCorrectAt(charPos)) {  // Remaining most common character is correct for this position
-            guess.setCharAt(charPos, mostCommonChar);
+            guess.setCharAt(charPos, leastCommonChar);
             guess.setCorrectAt(charPos);
-            charFreq[hash(mostCommonChar)]--;
+            charFreq[hash(leastCommonChar)]--;
             guess.setMatchCount(guess.getMatchCount() + 1);
         }
     }
@@ -244,7 +242,7 @@ public class SecretKeyGuesser {
      * @see SecretKeyGuesser#hash(char)
      */
     protected static char[] rankCharByFrequency(int[] freqs) {
-        if (freqs == null) throw  new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!");
+        if (freqs == null) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!");
         if (CHAR.length != freqs.length) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Invalid frequency map size!");
 
         char[] rankedChars = new char[CHAR.length];

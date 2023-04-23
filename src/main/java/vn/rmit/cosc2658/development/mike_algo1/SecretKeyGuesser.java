@@ -357,7 +357,7 @@ public class SecretKeyGuesser {
      * @see SecretKeyGuesser#hash(char)
      */
     protected static char[] rankCharByFrequency(int[] freqs) {
-        if (freqs == null) throw  new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!");
+        if (freqs == null) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!");
         if (CHAR.length != freqs.length) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Invalid frequency map size!");
 
         char[] rankedChars = new char[CHAR.length];
