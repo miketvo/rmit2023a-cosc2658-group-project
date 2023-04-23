@@ -85,6 +85,8 @@ public class SecretKeyGuesser {
             char[] charCommonalityRank = rankCharByFrequency(charFreq);
             double algoThreshold = (secretKeyLength - guess.getMatchCount()) / 3.2;  // Based on test performance analysis and visualization using Python
             if (getCharacterFrequencyRange(charFreq, charCommonalityRank) <= algoThreshold) {
+//            if (true) {
+//            if (false) {
                 depthFirstSwap(
                         secretKey, guess,
                         currPos, charFreq, charCommonalityRank,
@@ -171,11 +173,14 @@ public class SecretKeyGuesser {
             int startCharPos, int[] charFreq, char[] charCommonalityRank,
             boolean verbose
     ) {
+        char leastCommonChar = charCommonalityRank[charCommonalityRank.length - 1];
         int secretKeyLength = guess.length;
 
+        int lastCharPos = startCharPos;
         for (int nextCommonCharIndex = 0; nextCommonCharIndex < charCommonalityRank.length - 1; nextCommonCharIndex++) {
             int nextCommonCharHash = hash(charCommonalityRank[nextCommonCharIndex]);
             if (charFreq[nextCommonCharHash] == 0 || CHAR[nextCommonCharHash] == guess.getCharAt(startCharPos)) continue;
+
 
             for (int charPos = startCharPos; guess.getMatchCount() < secretKeyLength - 1 && charPos < secretKeyLength; charPos++) {
                 if (guess.isCorrectAt(charPos)) continue;
@@ -199,10 +204,14 @@ public class SecretKeyGuesser {
                         return;
                     }
                 }
+
+                lastCharPos = charPos;
             }
         }
 
-        throw new RuntimeException("SecretKeyGuesser.breadthFirstSwap() has exhausted all possible positions!");
+        guess.setCharAt(lastCharPos, leastCommonChar);
+        guess.setCorrectAt(lastCharPos);
+        charFreq[hash(leastCommonChar)]--;
     }
 
 
