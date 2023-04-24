@@ -3,6 +3,9 @@ package vn.rmit.cosc2658;
 
 @SuppressWarnings({"DuplicatedCode", "ManualArrayCopy"})
 public class SecretKeyGuesser {
+    public static final int secretKeyLength = 16;
+    public static final char[] CHAR = "RMIT".toCharArray(); // Possible characters in secret key
+
     /**
      * <ul>
      *     <li>Time complexity: O(n)</li>
@@ -10,12 +13,10 @@ public class SecretKeyGuesser {
      *     <li>Guess complexity: O(n)</li>
      * </ul>
      * @see vn.rmit.cosc2658.development.mike_algo1.SecretKeyGuesser
-     * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int, int[], char[], char[])
-     * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int, int[], char[], char[])
+     * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int[], char[]) 
+     * @see SecretKeyGuesser#linearCharacterSwapBreadthFirst(SecretKey, int[], char[]) 
      */
     public void start() {
-        final int secretKeyLength = 16;
-        final char[] CHAR = "RMIT".toCharArray(); // Possible characters in secret key
         final int[] charFreq = new int[CHAR.length];  // Number of occurrences (frequency) for each possible character
         SecretKey secretKey = new SecretKey();
 
@@ -61,12 +62,12 @@ public class SecretKeyGuesser {
             2. Linear Character Swap - Breadth First: Efficient for skewed distribution
 
         ************************************************************************************************************* */
-        final char[] charCommonalityRank = rankCharByFrequency(charFreq, CHAR);  // For optimization purposes.
+        final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
         double autoThreshold = secretKeyLength / 3.2;  // Based on test performance analysis and visualization using Python.
         if (getCharacterFrequencyRange(charFreq) <= autoThreshold) {
-            linearCharacterSwapDepthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, CHAR);
+            linearCharacterSwapDepthFirst(secretKey, charFreq, charCommonalityRank);
         } else {
-            linearCharacterSwapBreadthFirst(secretKey, secretKeyLength, charFreq, charCommonalityRank, CHAR);
+            linearCharacterSwapBreadthFirst(secretKey, charFreq, charCommonalityRank);
         }
     }
 
@@ -116,9 +117,9 @@ public class SecretKeyGuesser {
      * @param secretKey The secret key to be guessed.
      * @param charFreq Frequencies of the possible characters in the key.
      * @param charCommonalityRank Possible characters in the key, ranked in descending order by their frequency.
-     * @see SecretKeyGuesser#linearCharacterSwapBreadthFirst(SecretKey, int, int[], char[], char[])
+     * @see SecretKeyGuesser#linearCharacterSwapBreadthFirst(SecretKey, int[], char[]) 
      */
-    private static void linearCharacterSwapDepthFirst(SecretKey secretKey, int secretKeyLength, int[] charFreq, char[] charCommonalityRank, char[] CHAR) {
+    private static void linearCharacterSwapDepthFirst(SecretKey secretKey, int[] charFreq, char[] charCommonalityRank) {
         char mostCommonChar = charCommonalityRank[0];
         char leastCommonChar = mostCommonChar;
         for (int rank = CHAR.length - 1; rank > 0; rank--) {
@@ -209,9 +210,9 @@ public class SecretKeyGuesser {
      * @param secretKey The secret key to be guessed.
      * @param charFreq Frequencies of the possible characters in the key.
      * @param charCommonalityRank Possible characters in the key, ranked in descending order by their frequency.
-     * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int, int[], char[], char[]) 
+     * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int[], char[])
      */
-    private static void linearCharacterSwapBreadthFirst(SecretKey secretKey, int secretKeyLength, int[] charFreq, char[] charCommonalityRank, char[] CHAR) {
+    private static void linearCharacterSwapBreadthFirst(SecretKey secretKey, int[] charFreq, char[] charCommonalityRank) {
         int mostCommonCharHash = hash(charCommonalityRank[0]);
         int leastCommonCharHash = 0;
         for (int rank = CHAR.length - 1; rank > 0; rank--) {
@@ -318,7 +319,7 @@ public class SecretKeyGuesser {
      * @param freqs Frequency map for each possible character, where freqs[hash(c)] is the frequency for character c.
      * @see SecretKeyGuesser#hash(char)
      */
-    protected static char[] rankCharByFrequency(int[] freqs, char[] CHAR) {
+    protected static char[] rankCharByFrequency(int[] freqs) {
         if (freqs == null) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!");
         if (CHAR.length != freqs.length) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Invalid frequency map size!");
 
