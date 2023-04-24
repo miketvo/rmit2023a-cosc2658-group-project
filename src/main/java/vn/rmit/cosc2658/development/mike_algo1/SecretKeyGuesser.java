@@ -3,6 +3,7 @@ package vn.rmit.cosc2658.development.mike_algo1;
 import vn.rmit.cosc2658.development.SecretKey;
 
 
+@SuppressWarnings({"DuplicatedCode", "ManualArrayCopy"})
 public class SecretKeyGuesser {
     enum Algorithm { Auto, DepthFirst, BreadthFirst }
 
@@ -56,9 +57,7 @@ public class SecretKeyGuesser {
             return guess;
         }
 
-        if (cumulativeCharFreq < secretKeyLength) {
-            charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
-        }
+        charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
 
 
         /* *************************************************************************************************************
@@ -274,7 +273,7 @@ public class SecretKeyGuesser {
 
                 guess[i] = CHAR[nextCommonCharHash];
                 int newMatchCount = secretKey.guess(String.valueOf(guess));
-                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), cumulativeMatchCount);
+                if (verbose) System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), newMatchCount);
 
                 switch (newMatchCount - cumulativeMatchCount) {
                     case 1 -> {  // New replacement character is correct for this position
@@ -359,7 +358,7 @@ public class SecretKeyGuesser {
      * @see SecretKeyGuesser#hash(char)
      */
     protected static char[] rankCharByFrequency(int[] freqs) {
-        if (freqs == null) throw  new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!");
+        if (freqs == null) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!");
         if (CHAR.length != freqs.length) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Invalid frequency map size!");
 
         char[] rankedChars = new char[CHAR.length];
