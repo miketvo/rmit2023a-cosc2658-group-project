@@ -5,6 +5,8 @@ package vn.rmit.cosc2658;
 public class SecretKeyGuesser {
     public static final int secretKeyLength = 16;
     public static final char[] CHAR = "RMIT".toCharArray(); // Possible characters in secret key
+    private int guessCount = 0;
+
 
     /**
      * <ul>
@@ -35,7 +37,8 @@ public class SecretKeyGuesser {
             String guess = Character.toString(CHAR[charHash]).repeat(secretKeyLength);
 
             int matchCount = secretKey.guess(guess);
-            System.out.printf("Guessing \"%s\", %d match...\n", guess, matchCount);
+            guessCount++;
+            System.out.printf("Guess %d: \"%s\", %d match...\n", guessCount, guess, matchCount);
             if (matchCount == secretKeyLength) {
                 System.out.printf("I found the secret key. It is \"%s\"\n", guess);
             }
@@ -46,7 +49,7 @@ public class SecretKeyGuesser {
 
         if (cumulativeCharFreq == 0) {
             String guess = "T".repeat(secretKeyLength);
-            System.out.printf("I found the secret key. It is \"%s\"\n", guess);
+            System.out.printf("I found the secret key after %d guess(es). It is \"%s\"\n", guessCount, guess);
         }
 
         charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
@@ -119,7 +122,7 @@ public class SecretKeyGuesser {
      * @param charCommonalityRank Possible characters in the key, ranked in descending order by their frequency.
      * @see SecretKeyGuesser#linearCharacterSwapBreadthFirst(SecretKey, int[], char[]) 
      */
-    private static void linearCharacterSwapDepthFirst(SecretKey secretKey, int[] charFreq, char[] charCommonalityRank) {
+    private void linearCharacterSwapDepthFirst(SecretKey secretKey, int[] charFreq, char[] charCommonalityRank) {
         char mostCommonChar = charCommonalityRank[0];
         char leastCommonChar = mostCommonChar;
         for (int rank = CHAR.length - 1; rank > 0; rank--) {
@@ -142,8 +145,9 @@ public class SecretKeyGuesser {
 
                 baselineGuess[charPos] = CHAR[nextCommonCharHash];
                 int newMatchCount = secretKey.guess(String.valueOf(baselineGuess));
+                guessCount++;
                 baselineGuess[charPos] = mostCommonChar;
-                System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(baselineGuess), newMatchCount);
+                System.out.printf("Guess %d: \"%s\", %d match...\n", guessCount, String.valueOf(baselineGuess), newMatchCount);
 
                 if (newMatchCount < charFreq[hash(mostCommonChar)]) {  // Most common character is correct for this position
                     correctKey[charPos] = mostCommonChar;
@@ -177,7 +181,7 @@ public class SecretKeyGuesser {
         correctKey[secretKeyLength - 1] = lastChar;
 
 
-        System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(correctKey));
+        System.out.printf("I found the secret key after %d guess(es). It is \"%s\"\n", guessCount, String.valueOf(correctKey));
     }
 
     /**
@@ -212,7 +216,7 @@ public class SecretKeyGuesser {
      * @param charCommonalityRank Possible characters in the key, ranked in descending order by their frequency.
      * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int[], char[])
      */
-    private static void linearCharacterSwapBreadthFirst(SecretKey secretKey, int[] charFreq, char[] charCommonalityRank) {
+    private void linearCharacterSwapBreadthFirst(SecretKey secretKey, int[] charFreq, char[] charCommonalityRank) {
         int mostCommonCharHash = hash(charCommonalityRank[0]);
         int leastCommonCharHash = 0;
         for (int rank = CHAR.length - 1; rank > 0; rank--) {
@@ -235,8 +239,9 @@ public class SecretKeyGuesser {
 
 
                 guess[i] = CHAR[nextCommonCharHash];
+                guessCount++;
                 int newMatchCount = secretKey.guess(String.valueOf(guess));
-                System.out.printf("Guessing \"%s\", %d match...\n", String.valueOf(guess), newMatchCount);
+                System.out.printf("Guess %d: \"%s\", %d match...\n", guessCount, String.valueOf(guess), newMatchCount);
 
                 switch (newMatchCount - cumulativeMatchCount) {
                     case 1 -> {  // New replacement character is correct for this position
@@ -260,7 +265,7 @@ public class SecretKeyGuesser {
                         if (!correct[j]) guess[j] = CHAR[leastCommonCharHash];
                     }
 
-                    System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
+                    System.out.printf("I found the secret key after %d guess(es). It is \"%s\"\n", guessCount, String.valueOf(guess));
                     return;
                 }
             }
@@ -282,11 +287,11 @@ public class SecretKeyGuesser {
         guess[lastIncorrectPos] = lastChar;
 
 
-        System.out.printf("I found the secret key. It is \"%s\"\n", String.valueOf(guess));
+        System.out.printf("I found the secret key after %d guess(es). It is \"%s\"\n", guessCount, String.valueOf(guess));
     }
 
 
-    private static int getCharacterFrequencyRange(int[] charFreq) {
+    private int getCharacterFrequencyRange(int[] charFreq) {
         int minFreq = charFreq[0], maxFreq = charFreq[0];
         for (int i = 1; i < charFreq.length; i++) {
             if (charFreq[i] > 0) {
@@ -299,7 +304,7 @@ public class SecretKeyGuesser {
     }
 
 
-    private static int hash(char character) {
+    private int hash(char character) {
         return switch (character) {
             case 'R' -> 0;
             case 'M' -> 1;
@@ -319,7 +324,7 @@ public class SecretKeyGuesser {
      * @param freqs Frequency map for each possible character, where freqs[hash(c)] is the frequency for character c.
      * @see SecretKeyGuesser#hash(char)
      */
-    protected static char[] rankCharByFrequency(int[] freqs) {
+    protected char[] rankCharByFrequency(int[] freqs) {
         if (freqs == null) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Frequency map cannot be null!");
         if (CHAR.length != freqs.length) throw new IllegalArgumentException("SecretKeyGuesser.rankCharByFrequency(int[]): Invalid frequency map size!");
 
@@ -330,7 +335,7 @@ public class SecretKeyGuesser {
         return rankedChars;
     }
 
-    private static void mergeSort(char[] rankedChars, int[] freqs, int start, int end) {
+    private void mergeSort(char[] rankedChars, int[] freqs, int start, int end) {
         if (start < end) {
             int middle = (start + end) / 2;
             mergeSort(rankedChars, freqs, start, middle);
@@ -339,7 +344,7 @@ public class SecretKeyGuesser {
         }
     }
 
-    private static void merge(char[] rankedChars, int[] freqs, int start, int middle, int end) {
+    private void merge(char[] rankedChars, int[] freqs, int start, int middle, int end) {
         char[] left = new char[middle - start + 1];
         for (int i = start, j = 0; i <= middle; i++, j++) {
             left[j] = rankedChars[i];
