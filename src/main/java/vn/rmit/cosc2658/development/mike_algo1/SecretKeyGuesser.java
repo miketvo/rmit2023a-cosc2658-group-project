@@ -65,9 +65,9 @@ public class SecretKeyGuesser {
         Smart Guesses
         =============
 
-        Based on characters distribution, choose one of the following algorithm to minimize number of guesses:
-            1. Linear Character Swap - Depth First: Efficient for roughly equal distribution
-            2. Linear Character Swap - Breadth First: Efficient for skewed distribution
+        Based on characters frequencies, choose one of the following algorithm to minimize number of guesses:
+            1. Linear Character Swap - Depth First: Efficient for roughly equal frequencies
+            2. Linear Character Swap - Breadth First: Efficient for skewed frequencies
 
         ************************************************************************************************************* */
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
