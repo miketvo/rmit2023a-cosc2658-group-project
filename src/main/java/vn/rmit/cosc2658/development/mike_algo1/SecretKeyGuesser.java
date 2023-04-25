@@ -18,6 +18,7 @@ public class SecretKeyGuesser {
      * </ul>
      * @param secretKey The secret key to be guessed.
      * @param secretKeyLength Length of the secret key.
+     * @param algorithm The algorithm used to guess the secret key. Available options: Auto, DepthFirst, BreadthFirst.
      * @param verbose Switch for verbose output. Defaults to <strong>{@code false}</strong>.
      * @return The correct guess for the secret key.
      * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int, int[], char[], boolean)
