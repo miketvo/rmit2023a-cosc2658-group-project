@@ -7,7 +7,7 @@ import vn.rmit.cosc2658.development.SecretKey;
 public class SecretKeyGuesser {
     enum Algorithm { Auto, DepthFirst, BreadthFirst }
 
-    private static final char[] CHAR = "RMIT".toCharArray(); // Possible characters in secret key
+    private static final char[] CHAR = "RMIT".toCharArray();  // Possible characters in secret key
 
 
     /**
