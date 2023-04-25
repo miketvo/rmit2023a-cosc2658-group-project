@@ -7,7 +7,7 @@ import vn.rmit.cosc2658.development.SecretKey;
 public class SecretKeyGuesser {
     enum Algorithm { Auto, DepthFirst, BreadthFirst }
 
-    private static final char[] CHAR = "RMIT".toCharArray(); // Possible characters in secret key
+    private static final char[] CHAR = "RMIT".toCharArray();  // Possible characters in secret key
 
 
     /**
@@ -18,6 +18,7 @@ public class SecretKeyGuesser {
      * </ul>
      * @param secretKey The secret key to be guessed.
      * @param secretKeyLength Length of the secret key.
+     * @param algorithm The algorithm used to guess the secret key. Available options: Auto, DepthFirst, BreadthFirst.
      * @param verbose Switch for verbose output. Defaults to <strong>{@code false}</strong>.
      * @return The correct guess for the secret key.
      * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int, int[], char[], boolean)
@@ -62,12 +63,12 @@ public class SecretKeyGuesser {
 
         /* *************************************************************************************************************
 
-        Smart Guesses
-        =============
+        If algorithm == Auto: Smart Guesses
+        ===================================
 
-        Based on characters distribution, choose one of the following algorithm to minimize number of guesses:
-            1. Linear Character Swap - Depth First: Efficient for roughly equal distribution
-            2. Linear Character Swap - Breadth First: Efficient for skewed distribution
+        Based on characters frequencies, choose one of the following algorithm to minimize number of guesses:
+            1. Linear Character Swap - Depth First: Efficient for roughly equal frequencies
+            2. Linear Character Swap - Breadth First: Efficient for skewed frequencies
 
         ************************************************************************************************************* */
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.

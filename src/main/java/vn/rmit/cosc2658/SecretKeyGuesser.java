@@ -32,15 +32,18 @@ public class SecretKeyGuesser {
         - Guess complexity: O(1)
 
         ********************** */
+        System.out.println("[ Initial Guesses ]");
+
         int cumulativeCharFreq = 0;  // The sum of charFreq of R, M, I, and T
         for (int charHash = 0; cumulativeCharFreq < secretKeyLength && charHash < CHAR.length - 1; charHash++) {
             String guess = Character.toString(CHAR[charHash]).repeat(secretKeyLength);
 
             int matchCount = secretKey.guess(guess);
             guessCount++;
-            System.out.printf("Guess %d: \"%s\", %d match...\n", guessCount, guess, matchCount);
+            System.out.printf("Guess %d: \"%s\" (match: %d)\n", guessCount, guess, matchCount);
             if (matchCount == secretKeyLength) {
-                System.out.printf("I found the secret key. It is \"%s\"\n", guess);
+                System.out.printf("\nI found the secret key after %d guess(es). It is \"%s\"\n", guessCount, guess);
+                return;
             }
 
             charFreq[charHash] = matchCount;
@@ -49,10 +52,14 @@ public class SecretKeyGuesser {
 
         if (cumulativeCharFreq == 0) {
             String guess = "T".repeat(secretKeyLength);
-            System.out.printf("I found the secret key after %d guess(es). It is \"%s\"\n", guessCount, guess);
+            System.out.printf("\nI found the secret key after %d guess(es). It is \"%s\"\n", guessCount, guess);
+            return;
         }
 
         charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
+
+        System.out.println("\n==> [ Frequency Analysis ]");
+        for (char C : CHAR) System.out.printf("'%c': %d\n", C, charFreq[hash(C)]);
 
 
         /* *************************************************************************************************************
@@ -60,16 +67,19 @@ public class SecretKeyGuesser {
         Smart Guesses
         =============
 
-        Based on characters distribution, choose one of the following algorithm to minimize number of guesses:
-            1. Linear Character Swap - Depth First: Efficient for roughly equal distribution
-            2. Linear Character Swap - Breadth First: Efficient for skewed distribution
+        Based on characters frequencies, choose one of the following algorithm to minimize number of guesses:
+            1. Linear Character Swap - Depth First: Efficient for roughly equal frequencies
+            2. Linear Character Swap - Breadth First: Efficient for skewed frequencies
 
         ************************************************************************************************************* */
         final char[] charCommonalityRank = rankCharByFrequency(charFreq);  // For optimization purposes.
-        double autoThreshold = secretKeyLength / 3.2;  // Based on test performance analysis and visualization using Python.
-        if (getCharacterFrequencyRange(charFreq) <= autoThreshold) {
+        double algoThreshold = secretKeyLength / 3.2;  // Based on test performance analysis and visualization using Python.
+        int characterFrequencyRange = getCharacterFrequencyRange(charFreq);
+        if (characterFrequencyRange <= algoThreshold) {
+            System.out.printf("characterFrequencyRange=%d <= algoThreshold=%.2f\n\n==> [ Using Depth First Algorithm ]\n", characterFrequencyRange, algoThreshold);
             linearCharacterSwapDepthFirst(secretKey, charFreq, charCommonalityRank);
         } else {
+            System.out.printf("characterFrequencyRange=%d > algoThreshold=%.2f\n\n==> [ Using Breadth First Algorithm ]\n", characterFrequencyRange, algoThreshold);
             linearCharacterSwapBreadthFirst(secretKey, charFreq, charCommonalityRank);
         }
     }
@@ -146,8 +156,14 @@ public class SecretKeyGuesser {
                 baselineGuess[charPos] = CHAR[nextCommonCharHash];
                 int newMatchCount = secretKey.guess(String.valueOf(baselineGuess));
                 guessCount++;
+                System.out.printf(
+                        "Guess %d: \"%s\" (match: %d) ==> Secret key: \"%s\"\n",
+                        guessCount,
+                        String.valueOf(baselineGuess),
+                        newMatchCount,
+                        String.valueOf(correctKey)
+                );
                 baselineGuess[charPos] = mostCommonChar;
-                System.out.printf("Guess %d: \"%s\", %d match...\n", guessCount, String.valueOf(baselineGuess), newMatchCount);
 
                 if (newMatchCount < charFreq[hash(mostCommonChar)]) {  // Most common character is correct for this position
                     correctKey[charPos] = mostCommonChar;
@@ -181,7 +197,7 @@ public class SecretKeyGuesser {
         correctKey[secretKeyLength - 1] = lastChar;
 
 
-        System.out.printf("I found the secret key after %d guess(es). It is \"%s\"\n", guessCount, String.valueOf(correctKey));
+        System.out.printf("\nI found the secret key after %d guess(es). It is \"%s\"\n", guessCount, String.valueOf(correctKey));
     }
 
     /**
@@ -241,7 +257,12 @@ public class SecretKeyGuesser {
                 guess[i] = CHAR[nextCommonCharHash];
                 guessCount++;
                 int newMatchCount = secretKey.guess(String.valueOf(guess));
-                System.out.printf("Guess %d: \"%s\", %d match...\n", guessCount, String.valueOf(guess), newMatchCount);
+                System.out.printf(
+                        "Guess %d: \"%s\" (match: %d)\n",
+                        guessCount,
+                        String.valueOf(guess),
+                        newMatchCount
+                );
 
                 switch (newMatchCount - cumulativeMatchCount) {
                     case 1 -> {  // New replacement character is correct for this position
@@ -265,7 +286,7 @@ public class SecretKeyGuesser {
                         if (!correct[j]) guess[j] = CHAR[leastCommonCharHash];
                     }
 
-                    System.out.printf("I found the secret key after %d guess(es). It is \"%s\"\n", guessCount, String.valueOf(guess));
+                    System.out.printf("\nI found the secret key after %d guess(es). It is \"%s\"\n", guessCount, String.valueOf(guess));
                     return;
                 }
             }
@@ -287,7 +308,7 @@ public class SecretKeyGuesser {
         guess[lastIncorrectPos] = lastChar;
 
 
-        System.out.printf("I found the secret key after %d guess(es). It is \"%s\"\n", guessCount, String.valueOf(guess));
+        System.out.printf("\nI found the secret key after %d guess(es). It is \"%s\"\n", guessCount, String.valueOf(guess));
     }
 
 
