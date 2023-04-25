@@ -43,6 +43,7 @@ public class SecretKeyGuesser {
             System.out.printf("Guess %d: \"%s\" (match: %d)\n", guessCount, guess, matchCount);
             if (matchCount == secretKeyLength) {
                 System.out.printf("\nI found the secret key after %d guess(es). It is \"%s\"\n", guessCount, guess);
+                return;
             }
 
             charFreq[charHash] = matchCount;
@@ -52,6 +53,7 @@ public class SecretKeyGuesser {
         if (cumulativeCharFreq == 0) {
             String guess = "T".repeat(secretKeyLength);
             System.out.printf("\nI found the secret key after %d guess(es). It is \"%s\"\n", guessCount, guess);
+            return;
         }
 
         charFreq[CHAR.length - 1] = secretKeyLength - cumulativeCharFreq;
