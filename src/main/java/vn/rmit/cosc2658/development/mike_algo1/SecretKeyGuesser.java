@@ -62,8 +62,8 @@ public class SecretKeyGuesser {
 
         /* *************************************************************************************************************
 
-        Smart Guesses
-        =============
+        If algorithm == Auto: Smart Guesses
+        ===================================
 
         Based on characters frequencies, choose one of the following algorithm to minimize number of guesses:
             1. Linear Character Swap - Depth First: Efficient for roughly equal frequencies
