@@ -1,6 +1,4 @@
-package vn.rmit.cosc2658.development.mike_algo1;
-
-import vn.rmit.cosc2658.development.SecretKey;
+package vn.rmit.cosc2658.development;
 
 
 @SuppressWarnings({"DuplicatedCode", "ManualArrayCopy"})
