@@ -14,7 +14,7 @@ public class SecretKeyGuesser {
      *     <li>Space complexity: O(n)</li>
      *     <li>Guess complexity: O(n)</li>
      * </ul>
-     * @see vn.rmit.cosc2658.development.mike_algo1.SecretKeyGuesser
+     * @see vn.rmit.cosc2658.development.SecretKeyGuesser
      * @see SecretKeyGuesser#linearCharacterSwapDepthFirst(SecretKey, int[], char[]) 
      * @see SecretKeyGuesser#linearCharacterSwapBreadthFirst(SecretKey, int[], char[]) 
      */

@@ -1,7 +1,6 @@
-package vn.rmit.cosc2658.development.mike_algo1;
+package vn.rmit.cosc2658.development;
 
 import org.junit.jupiter.api.Test;
-import vn.rmit.cosc2658.development.SecretKey;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class SecretKeyGuesserTest {
-    private final String OUTPUT_DIR = "testData/mikeAlgo1/";
+    private final String OUTPUT_DIR = "testData/";
     private final SecretKey secretKey1 = new SecretKey("RRRRRRRRRMITRMIT");
     private final SecretKey secretKey2 = new SecretKey("RRRRRRRRRRRRRRRR");
     private final SecretKey secretKey3 = new SecretKey("MMMMMMMMMMMMMMMM");
