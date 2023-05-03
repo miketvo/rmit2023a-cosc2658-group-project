@@ -53,6 +53,13 @@
 You'll need [Git](https://git-scm.com) to clone and Maven extension to run this project on your preferred IDE or Editor.
 
 - On VSCode terminal
+#### Before cloning our repository, you need to do some steps below:
+```bash
+# Open VS Code and go to the Extensions tab or simply press Ctrl + Shift + X.
+# Search for "Extension Pack for Java" and click on "Install".
+# After the extension is installed, VSCode will ask you to install JDK, choose the version you want and click on "Install".
+# To ensure our code runs properly, our team highly recommends installing OpenJDK 8, specifically version 17.
+```
 ```bash
 # Clone this repository
 $ git clone https://github.com/miketvo/rmit2023a-cosc2658-group-project.git
