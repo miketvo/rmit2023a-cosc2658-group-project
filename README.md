@@ -23,10 +23,14 @@
 │   └── Analysis.ipynb
 ├── src/
 │   ├── main/java/vn/rmit/cosc2658
-│   │   ├── developments/
+│   │   ├── development/
+│   │   │   ├── InteractiveApp.java
+│   │   │   ├── SecretKey.java
+│   │   │   └── SecretKeyGuesser.java
 │   │   ├── SecretKey.java
 │   │   └── SecretKeyGuesser.java
-│   └── test
+│   └── test/java/vn/rmit/cosc2658/development
+│       └── SecretKeyGuesserTest.java
 ├── test-data/
 ├── AssessmentDetails.md
 ├── README.md
