@@ -22,12 +22,12 @@
 │   ├── images/
 │   └── Analysis.ipynb
 ├── src/
-│   ├── main/java/vn/rmit/
+│   ├── main/java/vn/rmit/cosc2658
 │   │   ├── developments/
 │   │   ├── SecretKey.java
 │   │   └── SecretKeyGuesser.java
 │   └── test
-├── testData/
+├── test-data/
 ├── AssessmentDetails.md
 ├── README.md
 ├── LICENSE
