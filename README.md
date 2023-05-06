@@ -4,8 +4,6 @@
 
 ---
 
-
-
 ## Contribution
 
 | Student Name         | Student ID | Contribution Score |
@@ -14,6 +12,7 @@
 | Nguyen Nguyen Khuong | S-3924577  |         3          |
 | Vo Tuong Minh        | S-3877562  |         3          |
 | Tran Ly The Quang    | S-3878707  |         3          |
+
 
 ## Project Structure
 
@@ -27,7 +26,7 @@
 │   │   ├── developments/
 │   │   ├── SecretKey.java
 │   │   └── SecretKeyGuesser.java
-│   └── test/java/vn/rmit/
+│   └── test
 ├── testData/
 ├── AssessmentDetails.md
 ├── README.md
@@ -36,18 +35,21 @@
 └── requirements.txt
 ```
 
-1. `notebooks/`: This folder contains all the images and data analysis from Jupyter Notebook based on different performance parameters 
+1. `notebooks/`: This folder contains all the images and data analysis with Jupyter Notebook based on different performance parameters
     - `images/`: This folder contains all the results of data visualization.
-    - Analysis.ipynb: The Jupyter Notebook for plotting and visualizing data.
-2. `src/`: This folder contains two sub-folders: 
-    - `main/java/vn/rmit/`: This folder contains the release guessing algorithm and the developments folder.
-    - `developments/`: This folder contains two classes that support our testing phase.
-    - SecretKey.java: The initial provided class from the project.
-    - SecretKeyGuesser.java: The final key guessing algorithm.
-    - `test/java/vn/rmit/`: This folder contains all the testing case throughout our devlopement
-3. `README.md`: A text file containing useful reference information about this project, including how to run the algorithm
-4. `LICENSE`: MIT
-5. `pom.xml`: XML file used in Maven-based Java projects for building automation and dependency management tool
+    - `Analysis.ipynb`: The Jupyter Notebook for plotting and visualizing data.
+2. `src/`: This folder contains two sub-folders:
+    - `main/java/vn/rmit/`: This folder contains the final guessing algorithm and the `development` Java package.
+    - `developments/`: This Java package folder contains two classes that support our development and testing phase.
+    - `SecretKey.java`: The initial provided class from the project.
+    - `SecretKeyGuesser.java:` The final key guessing algorithm.
+    - `test`: This folder contains all test cases (using JUnit) for various secret key.
+3. `testData/`: This folder contains all test results from JUnit tests in .csv format.
+4. `README.md`: A text file containing useful reference information about this project, including how to run the algorithm.
+5. `LICENSE`: MIT
+6. `pom.xml`: XML file used in Maven-based Java projects for building automation and dependency management tool
+7. `requirements.txt`: Text file for `pip` installation of necessary packages for our data visualization and anlysis in `notebooks`
+
 
 ## Build
 
@@ -78,6 +80,7 @@ $ git clone https://github.com/miketvo/rmit2023a-cosc2658-group-project.git
 # 3. Clone
 ```
 - Once the project is cloned, go to `src/main/java/vn/rmit/` folder and run the file `SecretKey.java`
+
 
 ## Video Demonstration
 
