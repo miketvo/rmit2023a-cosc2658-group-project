@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class SecretKeyGuesserTest {
-    private final String OUTPUT_DIR = "testData/";
+    private final String OUTPUT_DIR = "test-data/";
     private final SecretKey secretKey1 = new SecretKey("RRRRRRRRRMITRMIT");
     private final SecretKey secretKey2 = new SecretKey("RRRRRRRRRRRRRRRR");
     private final SecretKey secretKey3 = new SecretKey("MMMMMMMMMMMMMMMM");
