@@ -137,8 +137,4 @@ Refer to [IntelliJ IDEA - Getting Started](https://www.jetbrains.com/help/idea/g
 
 ## Video Demonstration
 
-<div>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/414mOLgm3i4" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-</div>
-
 Video available on YouTube: [Link](https://youtu.be/414mOLgm3i4).
