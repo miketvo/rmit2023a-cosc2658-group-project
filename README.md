@@ -89,6 +89,12 @@ To properly setup Java and Python development environment for our project, refer
 - [Java Testing in VSCode](https://code.visualstudio.com/docs/java/java-testing).
 - [Data Science in VSCode](https://code.visualstudio.com/docs/datascience/overview).
 
+To run tests, you need to install JUnit:
+
+```bash
+$ mvn install
+```
+
 If you are viewing and running Python scripts in `notebooks`, install the required Python packages:
 
 ```bash
@@ -104,6 +110,12 @@ $ pip install -r ./requirements.txt
 **Note:** The above requirement is needed only for viewing data visualization in `notebooks`. All Java functionalities and toolchain integrations are IDE's built-ins, so no other plugins are required.
 
 To properly setup OpenJDK 17 to work with IntelliJ IDEA toolchain, refer to this documentation: [IntelliJ IDEA - SDKs](https://www.jetbrains.com/help/idea/sdk.html#change-module-sdk).
+
+To run tests, you need to install JUnit:
+
+```bash
+$ mvn install
+```
 
 To enable and run Python functionality within IntelliJ IDEA, refer to the following documentation: [Python in IntelliJ IDEA](https://www.jetbrains.com/help/idea/python.html). For this project, we are using Python [virtual environment](https://docs.python.org/3/library/venv.html) to keep it light. However, feel free to use [Anaconda](https://www.anaconda.com/) if it is more convenient.
 
