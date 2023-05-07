@@ -1,8 +1,9 @@
 # COSC2658 Data Structures and Algorithms - Group Project
 
-[Assessment Details](AssessmentDetails.md)
+For problem description, see [Assessment Details](AssessmentDetails.md).
 
 ---
+
 
 ## Contribution
 
@@ -52,38 +53,74 @@
 4. `README.md`: A text file containing useful reference information about this project, including how to run the algorithm.
 5. `LICENSE`: MIT
 6. `pom.xml`: XML file used in Maven-based Java projects for building automation and dependency management tool
-7. `requirements.txt`: Text file for `pip` installation of necessary packages for our data visualization and anlysis in `notebooks`
+7. `requirements.txt`: Text file for `pip` installation of necessary packages for our data visualization and analysis in `notebooks`.
 
 
-## Build
+## Development Environment
 
-You'll need [Git](https://git-scm.com) to clone and Maven extension to run this project on your preferred IDE or Editor.
-#### Before cloning our repository, you need to do some steps below:
+### Global Requirements
 
-- On VSCode terminal
+| Requirement                        | Version |
+|:-----------------------------------|:-------:|
+| [Git](https://git-scm.com)         | latest  |
+| [Maven](https://maven.apache.org/) |  4.0.0  |
+| [OpenJDK](https://openjdk.org/)    | 17.0.2  |
+| [Python](https://www.python.org/)  |  3.11   |
+
+### VSCode Requirements
+
+Extension requirements for building and running Java classes:
+
+| Requirement                                                                                             | Version |
+|:--------------------------------------------------------------------------------------------------------|:-------:|
+| [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) | latest  |
+| [Test Runner for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-test)    | latest  |
+
+Additional extensions for viewing data visualization in `notebooks`:
+
+| Requirement                                                                       | Version |
+|:----------------------------------------------------------------------------------|:-------:|
+| [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)    | latest  |
+| [Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) | latest  |
+
+To properly setup Java and Python development environment for our project, refer to the following documentation:
+
+- [Java in VSCode](https://code.visualstudio.com/docs/languages/java).
+- [Java Testing in VSCode](https://code.visualstudio.com/docs/java/java-testing).
+- [Data Science in VSCode](https://code.visualstudio.com/docs/datascience/overview).
+
+If you are viewing and running Python scripts in `notebooks`, install the required Python packages:
+
 ```bash
-# Open VS Code and go to the Extensions tab or simply press Ctrl + Shift + X.
-# Search for "Extension Pack for Java" and click on "Install", 
-# it includes Maven support and other important Java development features.
-# After the extension is installed, VSCode will ask you to install JDK, 
-# choose the version you want and click on "Install".
-# To ensure our code runs properly, our team highly recommends 
-# installing OpenJDK 8, specifically version 17.
+$ pip install -r ./requirements.txt
 ```
-For more information, refer to [Java Build on VSCode](https://code.visualstudio.com/docs/java/java-build)
-```bash
-# Clone this repository
-$ git clone https://github.com/miketvo/rmit2023a-cosc2658-group-project.git
 
-# Go into the repository
-```
-- On IntelliJ IDEA interface
+### IntelliJ IDEA
+
+| Requirement                                                                        | Version |
+|:-----------------------------------------------------------------------------------|:-------:|
+| [Python Plugin for IntelliJ IDEA](https://plugins.jetbrains.com/plugin/631-python) | latest  |
+
+**Note:** The above requirement is needed only for viewing data visualization in `notebooks`. All Java functionalities and toolchain integrations are IDE's built-ins, so no other plugins are required.
+
+To properly setup OpenJDK 17 to work with IntelliJ IDEA toolchain, refer to this documentation: [IntelliJ IDEA - SDKs](https://www.jetbrains.com/help/idea/sdk.html#change-module-sdk).
+
+To enable and run Python functionality within IntelliJ IDEA, refer to the following documentation: [Python in IntelliJ IDEA](https://www.jetbrains.com/help/idea/python.html). For this project, we are using Python [virtual environment](https://docs.python.org/3/library/venv.html) to keep it light. However, feel free to use [Anaconda](https://www.anaconda.com/) if it is more convenient.
+
+If you are viewing and running Python scripts in `notebooks`, install the required Python packages:
+
 ```bash
-# 1. Get from VCS (Version Control)
-# 2. Paste https://github.com/miketvo/rmit2023a-cosc2658-group-project.git into URL box
-# 3. Clone
+$ pip install -r ./requirements.txt
 ```
-- Once the project is cloned, go to `src/main/java/vn/rmit/` folder and run the file `SecretKey.java`
+
+Refer to [IntelliJ IDEA - Getting Started](https://www.jetbrains.com/help/idea/getting-started.html) to learn about building, executing, debugging, and testing with IntelliJ IDEA and its Maven toolchain integration.
+
+
+## Build and Execution
+
+- A console [applet](src/main/java/vn/rmit/cosc2658/development/InteractiveApp.java) is available for you to manually play with guessing a random secret key. Edit line 7 to use any positive non-zero key length of choice.
+- Our final solution can be run by calling `vn.rmit.cosc2658.SecretKey.main()`.
+- All tests are in `vn.rmit.cosc2658.development.SecretKeyGuesserTest`.
 
 
 ## Video Demonstration
