@@ -49,7 +49,7 @@ For problem description, see [Assessment Details](AssessmentDetails.md).
     - `SecretKey.java`: The initial provided class from the project.
     - `SecretKeyGuesser.java:` The final key guessing algorithm.
     - `test`: This folder contains all test cases (using JUnit) for various secret key.
-3. `testData/`: This folder contains all test results from JUnit tests in .csv format.
+3. `test-data/`: This folder contains all test results from JUnit tests in .csv format.
 4. `README.md`: A text file containing useful reference information about this project, including how to run the algorithm.
 5. `LICENSE`: MIT
 6. `pom.xml`: XML file used in Maven-based Java projects for building automation and dependency management tool
