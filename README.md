@@ -137,4 +137,4 @@ Refer to [IntelliJ IDEA - Getting Started](https://www.jetbrains.com/help/idea/g
 
 ## Video Demonstration
 
-**TODO:** [Link](insert-link-here) or Embedded video here.
+Video available on YouTube: [Link](https://youtu.be/414mOLgm3i4).
