@@ -91,7 +91,7 @@ To properly setup Java and Python development environment for our project, refer
 - [Java Testing in VSCode](https://code.visualstudio.com/docs/java/java-testing).
 - [Data Science in VSCode](https://code.visualstudio.com/docs/datascience/overview).
 
-To run tests, you need to install JUnit:
+To run tests, you need to install JUnit Maven dependency:
 
 ```bash
 $ mvn install
