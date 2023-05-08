@@ -46,9 +46,9 @@ For problem description, see [Assessment Details](AssessmentDetails.md).
 2. `src/`: This folder contains two sub-folders:
     - `main/java/vn/rmit/cosc2658`: This folder contains the final guessing algorithm and the `development` Java package.
       - `development/`: This Java package folder contains two classes that support our development and testing phase.
-      - `test/`: This folder contains all test cases (using JUnit) for various test secret keys.
       - `SecretKey.java`: The initial provided class from the [Assessment Details](AssessmentDetails.md).
       - `SecretKeyGuesser.java:` The final key guessing algorithm implementation.
+    - `test/`: This folder contains all test cases (using JUnit) for various test secret keys.
 3. `test-data/`: This folder contains all test results from JUnit tests in .csv format.
 4. `README.md`: A text file containing useful reference information about this project, including how to run the algorithm.
 5. `LICENSE`: MIT
