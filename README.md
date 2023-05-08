@@ -44,11 +44,11 @@ For problem description, see [Assessment Details](AssessmentDetails.md).
     - `images/`: This folder contains all the results of data visualization.
     - `Analysis.ipynb`: The Jupyter Notebook for plotting and visualizing data.
 2. `src/`: This folder contains two sub-folders:
-    - `main/java/vn/rmit/`: This folder contains the final guessing algorithm and the `development` Java package.
-    - `developments/`: This Java package folder contains two classes that support our development and testing phase.
+    - `main/java/vn/rmit/cosc2658`: This folder contains the final guessing algorithm and the `development` Java package.
+    - `development/`: This Java package folder contains two classes that support our development and testing phase.
     - `SecretKey.java`: The initial provided class from the project.
     - `SecretKeyGuesser.java:` The final key guessing algorithm.
-    - `test`: This folder contains all test cases (using JUnit) for various secret key.
+    - `test/`: This folder contains all test cases (using JUnit) for various secret key.
 3. `test-data/`: This folder contains all test results from JUnit tests in .csv format.
 4. `README.md`: A text file containing useful reference information about this project, including how to run the algorithm.
 5. `LICENSE`: MIT
