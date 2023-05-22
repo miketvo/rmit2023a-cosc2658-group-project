@@ -23,6 +23,9 @@ class SecretKeyGuesserTest {
     private final SecretKey secretKey9 = new SecretKey("TTTTIIIIMMMMRRRR");
     private final SecretKey secretKey10 = new SecretKey("RRRIIIIIRRRRRIIR");
     private final SecretKey secretKey11 = new SecretKey("RRMMIITTTTIIMMRR");
+    private final SecretKey secretKey12 = new SecretKey("RMITTIMRRMITTIMR");
+    private final SecretKey secretKey13 = new SecretKey("RRMMIITTTTIIMMRR");
+    private final SecretKey secretKey14 = new SecretKey("ITTRMTMRRTITTRMT");
 
 
     @Test
@@ -75,6 +78,15 @@ class SecretKeyGuesserTest {
 
         assertEquals(SecretKeyGuesser.start(secretKey11, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey11.getKey());
         System.out.printf("\"%s\" took %d guesses.\n", secretKey11.getKey(), secretKey11.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey12, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey12.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey12.getKey(), secretKey12.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey13, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey13.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey13.getKey(), secretKey13.getGuessCount());
+
+        assertEquals(SecretKeyGuesser.start(secretKey14, 16, SecretKeyGuesser.Algorithm.Auto, false), secretKey14.getKey());
+        System.out.printf("\"%s\" took %d guesses.\n", secretKey14.getKey(), secretKey14.getGuessCount());
     }
 
     @Test
